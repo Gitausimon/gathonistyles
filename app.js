@@ -362,7 +362,7 @@ function initNewsletter() {
       e.preventDefault();
       const input = newsletterForm.querySelector(".newsletter-input");
       if (input) input.value = "";
-      showToast("Subscribed to Maison Nairobi releases.", "success");
+      showToast("Subscribed to Gathoni Styles releases.", "success");
     });
   }
 }
@@ -616,7 +616,7 @@ function loadProductDetails(productId) {
 
 // WhatsApp Link Generator compiler
 export function generateWhatsAppLink(productName, garmentColor, measurements, price, clientName) {
-  let text = `Hello Maison Nairobi! I'd like to order a custom-tailored *${productName}* in *${garmentColor}* (Ksh ${formatPrice(price)}).\n\n`;
+  let text = `Hello Gathoni Styles! I'd like to order a custom-tailored *${productName}* in *${garmentColor}* (Ksh ${formatPrice(price)}).\n\n`;
   text += `*Client Name:* ${clientName}\n`;
   text += `*My Measurements (in cm):*\n`;
   
@@ -753,7 +753,7 @@ function initAdminDashboard() {
         waButton.addEventListener("click", () => {
           const clientName = waButton.getAttribute("data-client");
           const productName = waButton.getAttribute("data-product");
-          const chatMsg = `Hello ${clientName}, this is Maison Nairobi. Regarding your custom order for the *${productName}*, we would like to confirm some details...`;
+          const chatMsg = `Hello ${clientName}, this is Gathoni Styles. Regarding your custom order for the *${productName}*, we would like to confirm some details...`;
           const chatUrl = `https://wa.me/${TAILOR_WHATSAPP_PHONE}?text=${encodeURIComponent(chatMsg)}`;
           window.open(chatUrl, "_blank");
         });
