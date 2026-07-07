@@ -159,18 +159,13 @@ function initJourneyTimeline() {
   if (window.gsap && window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Detect mobile layout (vertical)
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-    // Stagger the nodes in
-    nodes.forEach((node, i) => {
+    // Fade nodes in individually rather than staggered from section top
+    nodes.forEach((node) => {
       ScrollTrigger.create({
-        trigger: section,
-        start: "top 80%",
+        trigger: node,
+        start: "top 85%",
         onEnter: () => {
-          setTimeout(() => {
-            node.classList.add("is-visible");
-          }, i * 180);
+          node.classList.add("is-visible");
         },
         once: true
       });
@@ -179,9 +174,9 @@ function initJourneyTimeline() {
     // Animate track fill and activate nodes on scroll
     ScrollTrigger.create({
       trigger: section,
-      start: "top 70%",
-      end: "bottom 40%",
-      scrub: 0.5,
+      start: "top 60%",
+      end: "bottom 85%",
+      scrub: true,
       onUpdate: (self) => {
         const progress = self.progress;
 
@@ -195,7 +190,7 @@ function initJourneyTimeline() {
 
         // Activate nodes as the line reaches them
         nodes.forEach((node, i) => {
-          const threshold = (i + 0.5) / nodes.length;
+          const threshold = (i + 0.25) / nodes.length;
           if (progress >= threshold) {
             node.classList.add("is-active");
           } else {
@@ -210,6 +205,7 @@ function initJourneyTimeline() {
       node.classList.add("is-visible", "is-active");
     });
     trackFill.style.width = "100%";
+    trackFill.style.height = "100%";
   }
 }
 

@@ -47,7 +47,12 @@
 
 html, body {
   max-width: 100%;
+}
+
+#app-viewport {
   overflow-x: hidden;
+  max-width: 100%;
+  position: relative;
 }
 
 body {
