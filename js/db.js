@@ -3,16 +3,27 @@
  * Manages connections to Firestore or falls back gracefully to LocalStorage
  */
 
-// Firebase Configuration. Replace with your actual credentials.
-export const firebaseConfig = {
+// Default config placeholders or local load
+let tempConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
   projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
+  storageBucket: "YOUR_STORAGE_BUCKET",
   messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "1:YOUR_MESSAGING_SENDER_ID:web:47dfed6a1a02296eaecab8",
+  appId: "YOUR_APP_ID",
   measurementId: "YOUR_MEASUREMENT_ID"
 };
+
+try {
+  const localConfig = await import("./config.js");
+  if (localConfig && localConfig.firebaseConfig) {
+    tempConfig = { ...tempConfig, ...localConfig.firebaseConfig };
+  }
+} catch (e) {
+  // Silence error, config.js is gitignored and optional
+}
+
+export const firebaseConfig = tempConfig;
 
 // Check if firebase config is populated with real credentials
 const isFirebaseConfigured = 
