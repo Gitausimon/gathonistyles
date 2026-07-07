@@ -64,6 +64,7 @@ const CATALOG_ITEMS = [
 
 // App State
 let activeFilters = "all";
+let _heroAnimated = false;
 
 // -------------------------------------------------------------
 // APP INITIALIZATION
@@ -118,7 +119,6 @@ function initLenis() {
   }
 }
 
-let _heroAnimated = false;
 function runGSAPEntrance() {
   if (!window.gsap || _heroAnimated) return;
   _heroAnimated = true;
