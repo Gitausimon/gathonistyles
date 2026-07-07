@@ -157,6 +157,12 @@ body::before {
   100% { transform: translate(40px, -45px) scale(1.1); }
 }
 
+@media (max-width: 768px) {
+  .blob {
+    display: none !important;
+  }
+}
+
 /* -------------------------------------------------------------
  * FLOATING GLASS CAPSULE HEADER
  * ------------------------------------------------------------- */

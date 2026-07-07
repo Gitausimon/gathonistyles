@@ -185,10 +185,12 @@ function initJourneyTimeline() {
       onUpdate: (self) => {
         const progress = self.progress;
 
-        if (isMobile) {
+        if (window.innerWidth <= 768) {
           trackFill.style.height = `${progress * 100}%`;
+          trackFill.style.width = `100%`;
         } else {
           trackFill.style.width = `${progress * 100}%`;
+          trackFill.style.height = `100%`;
         }
 
         // Activate nodes as the line reaches them
