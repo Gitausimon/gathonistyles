@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Maison Nairobi - A premium digital lookbook and bespoke custom-tailoring storefront. Submit precise measurements for handmade dresses, official wear, and casual garments with direct WhatsApp consultations.">
+  <meta name="keywords"
+    content="custom tailoring, nairobi fashion, bespoke dresses, measuring guide, maison nairobi, whatsapp checkout, anti-shopify">
+  <title>Gathoni Nairobi | Bespoke Lookbook & Tailoring</title>
+
+  <!-- SEO & Social Meta Tags -->
+  <meta property="og:title" content="Gathoni Nairobi | Bespoke Custom Tailoring">
+  <meta property="og:description"
+    content="Nairobi's premium digital lookbook. Enter measurements and order bespoke tailoring via WhatsApp.">
+  <meta property="og:type" content="website">
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="index.css">
+
+  <!-- Animations & Scroll Dynamics CDNs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Floating Glow Blobs (Visual Depth Background) -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- Floating Capsule Navigation Header -->
+  <div class="nav-container-floating">
+    <header class="header-glass">
+      <nav class="container nav-bar">
+        <a href="#home" class="logo" id="nav-logo">Gathoni<span> NAIROBI</span></a>
+        <div class="nav-links" id="nav-links">
+          <a href="#home" class="nav-link active" id="link-home">Lookbook</a>
+          <a href="#catalog" class="nav-link" id="link-catalog">Collection</a>
+        </div>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle mobile menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </nav>
+      <!-- Wait Time Banner synced with Firestore/LocalStorage -->
+      <div id="wait-time-banner" class="wait-time-banner low-demand">
+        Syncing boutique schedule...
+      </div>
+    </header>
+  </div>
+
+  <!-- SPA Core Main Container -->
+  <main id="app-viewport">
+
+    <!-- VIEW 1: HOME / LOOKBOOK -->
+    <section id="view-home" class="spa-view">
+      <div class="container hero-section">
+        <div class="hero-content-center">
+          <span class="hero-brand-logo animate-hero">G A T H O N I</span>
+          <h1 class="hero-title animate-hero">Tailored to<br>Fit Perfectly</h1>
+          <p class="hero-subtext animate-hero">Skip the standard sizes. Experience editorial fashion customized to your
+            exact silhouette. Hand-crafted local tailoring, finalized over a quick, friction-free WhatsApp chat.</p>
+          <div class="hero-actions animate-hero">
+            <a href="#catalog" class="btn-primary-pill" id="btn-hero-explore">Explore Collection &rarr;</a>
+            <a href="https://wa.me/254700000000?text=Hello%20Maison%20Nairobi!%20I'd%20like%20to%20book%20a%20tailoring%20consultation."
+              target="_blank" class="btn-outline-pill glass-btn">Start Consultation</a>
+          </div>
+        </div>
+
+        <!-- Centered Floating Image Frame with Specular Highlight and Organic Border-Radius -->
+        <div class="hero-image-center animate-hero-image">
+          <div class="hero-image-frame-masked">
+            <img src="assets/hero_editorial.png"
+              alt="High-end editorial modern African fashion garment modeled in Nairobi" loading="eager" />
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Journey Timeline Section -->
+      <section class="journey-section" id="journey-timeline">
+        <div class="container">
+          <h2 class="section-title">The Bespoke Experience</h2>
+          <p class="journey-subtitle">From inspiration to doorstep — four seamless steps, all on WhatsApp.</p>
+
+          <div class="journey-timeline">
+            <!-- The animated connecting line -->
+            <div class="timeline-track">
+              <div class="timeline-track-fill" id="timeline-track-fill"></div>
+            </div>
+
+            <!-- Step 1: Choose -->
+            <div class="timeline-node" data-step="1">
+              <div class="node-dot"><span class="dot-ping"></span></div>
+              <div class="node-content">
+                <div class="node-icon">
+                  <!-- Fabric Rolls SVG -->
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4z" />
+                    <path d="M14 4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V4z" />
+                    <path d="M4 14c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4z" />
+                    <path d="M14 14c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-4z" />
+                    <path d="M7 2v2M17 2v2M7 12v-2M17 12v-2" />
+                  </svg>
+                </div>
+                <span class="node-label">Choose</span>
+                <h3 class="node-title">Browse the Lookbook</h3>
+                <p class="node-desc">Explore our curated collection of exclusive dresses, skirts, and tailored official
+                  wear.</p>
+              </div>
+            </div>
+
+            <!-- Step 2: Measure -->
+            <div class="timeline-node" data-step="2">
+              <div class="node-dot"><span class="dot-ping"></span></div>
+              <div class="node-content">
+                <div class="node-icon">
+                  <!-- Measuring Tape SVG -->
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z" />
+                    <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
+                    <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </div>
+                <span class="node-label">Measure</span>
+                <h3 class="node-title">Input Your Fit</h3>
+                <p class="node-desc">Follow our guided measurement tool. Every centimetre captured — zero guesswork.</p>
+              </div>
+            </div>
+
+            <!-- Step 3: Tailoring -->
+            <div class="timeline-node" data-step="3">
+              <div class="node-dot"><span class="dot-ping"></span></div>
+              <div class="node-content">
+                <div class="node-icon">
+                  <!-- Sewing Machine / Scissors SVG -->
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="6" cy="6" r="3" />
+                    <circle cx="6" cy="18" r="3" />
+                    <line x1="20" y1="4" x2="8.12" y2="15.88" />
+                    <line x1="14.47" y1="14.48" x2="20" y2="20" />
+                    <line x1="8.12" y1="8.12" x2="12" y2="12" />
+                  </svg>
+                </div>
+                <span class="node-label">Tailoring</span>
+                <h3 class="node-title">Hand-Crafted for You</h3>
+                <p class="node-desc">Your garment is cut, stitched, and finished by hand in our Nairobi atelier.</p>
+              </div>
+            </div>
+
+            <!-- Step 4: Delivery -->
+            <div class="timeline-node" data-step="4">
+              <div class="node-dot"><span class="dot-ping"></span></div>
+              <div class="node-content">
+                <div class="node-icon">
+                  <!-- Mannequin / Delivery SVG -->
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v1a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+                    <path d="M6.5 9C4 9.5 3 11 3 13v2h18v-2c0-2-1-3.5-3.5-4" />
+                    <line x1="12" y1="15" x2="12" y2="22" />
+                    <line x1="8" y1="22" x2="16" y2="22" />
+                  </svg>
+                </div>
+                <span class="node-label">Delivery</span>
+                <h3 class="node-title">Styled &amp; Delivered</h3>
+                <p class="node-desc">Your finished piece arrives at your door. Pay M-PESA only after consultation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- VIEW 2: PRODUCT CATALOG -->
+    <section id="view-catalog" class="spa-view" style="display: none;">
+      <div class="container catalog-section">
+        <h2 class="section-title">The Lookbook Collection</h2>
+
+        <!-- Category Filter Pill Bar -->
+        <nav class="filter-bar" aria-label="Catalog filters">
+          <div class="filter-pills glass" id="catalog-filter-bar">
+            <button class="filter-pill active" data-category="all">
+              <span class="pill-dot"></span> All Items
+            </button>
+            <button class="filter-pill" data-category="dresses">
+              <span class="pill-dot"></span> Dresses
+            </button>
+            <button class="filter-pill" data-category="official">
+              <span class="pill-dot"></span> Official
+            </button>
+            <button class="filter-pill" data-category="casual">
+              <span class="pill-dot"></span> Casual
+            </button>
+          </div>
+        </nav>
+
+        <!-- Catalog Products Grid -->
+        <div class="product-grid" id="catalog-grid">
+          <!-- Dynamically Injected Products -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: PRODUCT DETAIL PAGE (PDP) -->
+    <section id="view-pdp" class="spa-view" style="display: none;">
+      <div class="container pdp-section">
+
+        <button class="btn-back-to-catalog glass-btn" id="btn-back-to-catalog">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Catalog
+        </button>
+
+        <div class="pdp-grid">
+          <!-- Sticky Left Image Column inside a Glass Card Frame -->
+          <div class="pdp-sticky-left">
+            <div class="pdp-image-frame glass-pdp-frame">
+              <img id="pdp-product-image" src="" alt="Selected garment closeup photo" />
+
+            </div>
+          </div>
+
+          <!-- Scrolling Right Form Column -->
+          <div class="pdp-scroll-right">
+            <div class="pdp-header glass">
+              <span class="pdp-category" id="pdp-product-category">Garment Type</span>
+              <h2 class="pdp-title" id="pdp-product-title">Garment Name</h2>
+              <div class="pdp-price" id="pdp-product-price">Ksh 0.00</div>
+            </div>
+
+            <p class="pdp-description glass" id="pdp-product-description">Garment description here...</p>
+
+            <!-- Interactive Measuring Blueprint Block (Glass card container) -->
+            <div class="measurement-guide-box glass">
+              <div id="pdp-silhouette-container">
+                <!-- Silhouette SVG injected here -->
+              </div>
+              <div id="pdp-form-container">
+                <!-- MeasurementForm component injected here -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: ADMIN LOGIN GATEWAY -->
+    <section id="view-login" class="spa-view" style="display: none;">
+      <div class="container" style="min-height: 80vh; display: flex; align-items: center; justify-content: center;">
+        <div class="login-card glass">
+          <h2 class="section-title" style="margin-bottom: 1rem;">Tailor Ops</h2>
+          <p style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary);">Sign in to access production
+            queue.</p>
+          <form id="admin-login-form" class="login-form">
+            <div class="form-group">
+              <label for="login-email">Email Address</label>
+              <input type="email" id="login-email" class="measurement-input" required />
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" class="measurement-input" required />
+            </div>
+            <button type="submit" class="btn-dark" style="width: 100%; margin-top: 1rem;">Authenticate</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: ADMIN DASHBOARD (Tailor Ops) -->
+    <section id="view-admin" class="spa-view" style="display: none;">
+      <div class="container admin-section">
+        <header class="admin-header glass"
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+          <h2 class="admin-title">Operations Dashboard</h2>
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <span class="btn-outline glass-btn" style="border-style: dashed; pointer-events: none;"
+              id="db-status-badge">Offline Mode</span>
+            <button id="btn-admin-logout" class="btn-outline">Sign Out</button>
+          </div>
+        </header>
+
+        <div class="admin-grid">
+
+          <!-- Column 1: Store Settings -->
+          <aside class="admin-sidebar">
+            <div class="admin-card glass">
+              <h3 class="admin-card-title">Production Status</h3>
+              <form id="form-queue-editor" class="queue-editor-form">
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                  Adjust current tailoring workload. This updates the public wait time banner across the website.
+                </p>
+                <div class="queue-input-group">
+                  <label for="queue-days">Production Wait:</label>
+                  <input type="number" id="queue-days" name="days" min="1" max="14" class="queue-number-input"
+                    required />
+                  <span>Days</span>
+                </div>
+                <button type="submit" class="btn-primary-pill"
+                  style="padding: 0.8rem; font-size: 0.85rem; width: 100%;">
+                  Sync Workload Status
+                </button>
+              </form>
+            </div>
+
+            <!-- Floating Analytics counters (Apple/Linear Style) -->
+            <div class="admin-card glass analytics-card">
+              <h3 class="admin-card-title">Tailoring Workload</h3>
+              <div class="analytics-radial-box">
+                <!-- Circular progress ring -->
+                <svg class="radial-ring" viewBox="0 0 36 36">
+                  <path class="ring-bg"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="ring-fill" id="analytics-progress-ring" stroke-dasharray="40, 100"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="radial-text">
+                  <span class="radial-number" id="analytics-active-count">0</span>
+                  <span class="radial-label">Active</span>
+                </div>
+              </div>
+              <div class="analytics-list">
+                <div class="analytics-item">
+                  <span class="dot-indicator blue"></span>
+                  <span class="label">Consultations:</span>
+                  <span class="value" id="count-consultations">0</span>
+                </div>
+                <div class="analytics-item">
+                  <span class="dot-indicator orange"></span>
+                  <span class="label">In Production:</span>
+                  <span class="value" id="count-production">0</span>
+                </div>
+                <div class="analytics-item">
+                  <span class="dot-indicator green"></span>
+                  <span class="label">Completed:</span>
+                  <span class="value" id="count-completed">0</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Column 2: Live Orders / Consultation Tracker -->
+          <main class="orders-list-box">
+            <div class="admin-card glass" style="margin-bottom: 0;">
+              <h3 class="admin-card-title">Active Consultations Queue</h3>
+              <div id="admin-orders-list">
+                <!-- Dynamically Injected Orders -->
+              </div>
+            </div>
+          </main>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="footer-glass">
+    <div class="container footer-grid">
+      <div class="footer-left">
+        <span class="footer-logo">Gathoni<span> NAIROBI</span></span>
+        <p class="footer-quote">"True luxury is in the fit. Each line, stitch, and fold is crafted uniquely to honor
+          your silhouette."</p>
+      </div>
+      <div class="footer-right">
+        <div class="footer-links-col">
+          <h4>Explore</h4>
+          <a href="#home">Lookbook</a>
+          <a href="#catalog">Collection</a>
+        </div>
+        <div class="footer-links-col">
+          <h4>Contact</h4>
+          <p>Nairobi, Kenya</p>
+          <p>inquire@gathonininairobi.com</p>
+        </div>
+        <div class="footer-newsletter">
+          <h4>Newsletter</h4>
+          <p>Subscribe for exclusive seasonal lookbooks and private collection releases.</p>
+          <form class="newsletter-form" id="newsletter-form">
+            <input type="email" placeholder="Your email address" class="newsletter-input" required />
+            <button type="submit" class="btn-newsletter">Subscribe</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 GathoniNairobi. Handcrafted for Nairobi. Crafted for You.</p>
+    </div>
+  </footer>
+
+  <!-- Global Floating Toast Container (Apple-style Notification hub) -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Main JavaScript App Controller (As ES6 Module) -->
+  <script type="module" src="app.js"></script>
+</body>
+
+</html>
