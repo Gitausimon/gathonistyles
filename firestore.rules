@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if the user is authenticated via Firebase Auth
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    match /catalog/{document} {
+      // Anyone can read the catalog
+      allow read: if true;
+      // Only authenticated admins can create, update, delete products
+      allow write: if isAdmin();
+    }
+    
+    match /settings/{document} {
+      // Anyone can read queue status
+      allow read: if true;
+      // Only authenticated admins can modify queue setting
+      allow write: if isAdmin();
+    }
+    
+    match /orders/{document} {
+      // Anyone can create an order (checkout form)
+      allow create: if true;
+      // Only authenticated admins can view and update orders
+      // Note: We don't allow public read because orders contain personal information (PII)
+      allow read, update, delete: if isAdmin();
+    }
+    
+    // Deny access to anything not explicitly matched above
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

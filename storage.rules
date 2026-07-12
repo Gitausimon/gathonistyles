@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    match /catalog/{imageId} {
+      // Allow public read access to catalog images
+      allow read: if true;
+      // Define access restrictions for uploads based on Authentication
+      allow write: if isAdmin();
+    }
+    
+    // Deny access to anything else by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

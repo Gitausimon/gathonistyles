@@ -12,7 +12,13 @@ import {
   updateOrderStatus, 
   monitorAuthState, 
   loginAdmin, 
-  logoutAdmin 
+  logoutAdmin,
+  subscribeCatalog,
+  addProduct,
+  deleteProduct,
+  uploadProductImage,
+  subscribeHomepageSettings,
+  updateHomepageSettings
 } from "./js/db.js";
 import { renderSilhouette, highlightZone } from "./js/components/Silhouette.js";
 import { renderMeasurementForm, bindFormEvents, requiredMeasurements, measurementRanges } from "./js/components/MeasurementForm.js";
@@ -22,45 +28,8 @@ const TAILOR_WHATSAPP_PHONE = "254758519041";
 
 let currentAdminUser = null;
 
-// Premium Lookbook Collection Catalog
-const CATALOG_ITEMS = [
-  {
-    id: "signature-column-dress",
-    name: "Signature Column Dress",
-    category: "dresses",
-    price: 7200,
-    type: "dress",
-    image: "assets/dress_editorial.png",
-    description: "An elegant, floor-skimming column gown sculpted for a dramatic yet minimal silhouette. Crafted from premium breathable cotton-linen blend, perfect for both corporate elegance and formal evening dinners in Nairobi."
-  },
-  {
-    id: "wool-blend-power-suit",
-    name: "Wool-Blend Power Suit",
-    category: "official",
-    price: 12500,
-    type: "official",
-    image: "assets/official_editorial.png",
-    description: "A sharp, structured double-breasted blazer and high-waisted trouser set. Designed to empower. Made with high-grade tropical wool-blend fabric, tailored precisely to sit flat on the shoulders and waist."
-  },
-  {
-    id: "pleated-wrap-skirt",
-    name: "Pleated Wrap Skirt",
-    category: "casual",
-    price: 4800,
-    type: "skirt",
-    image: "assets/casual_editorial.png",
-    description: "A versatile modern wrap skirt featuring hand-pressed pleats and an adjustable waist tie. Cut in a flattering mid-length silhouette that flows naturally. Can be dressed up for weddings or down for brunch."
-  },
-  {
-    id: "cowl-neck-slip-dress",
-    name: "Cowl-Neck Slip Dress",
-    category: "dresses",
-    price: 6900,
-    type: "dress",
-    image: "assets/hero_editorial.png",
-    description: "A bias-cut cowl neck slip dress that fluidly contours your body curves. Features thin adjustable straps and an open back design. Extremely luxurious feel, hand-finished using high-end Nairobi silk-satin."
-  }
-];
+// Premium Lookbook Collection Catalog (populated dynamically)
+let CATALOG_ITEMS = [];
 
 // App State
 let activeFilters = "all";
@@ -70,6 +39,31 @@ let _heroAnimated = false;
 // APP INITIALIZATION
 // -------------------------------------------------------------
 function initApp() {
+  // Subscribe to public Dynamic Lookbook catalog changes from Database
+  subscribeCatalog((items) => {
+    CATALOG_ITEMS = items;
+    
+    // Auto-refresh main page views if active
+    const hash = window.location.hash || "#home";
+    if (hash === "#catalog") {
+      renderCatalogGrid();
+    } else if (hash.startsWith("#pdp")) {
+      const urlParams = new URLSearchParams(hash.substring(hash.indexOf("?")));
+      const productId = urlParams.get("id");
+      if (CATALOG_ITEMS.some(p => p.id === productId)) {
+        loadProductDetails(productId);
+      } else {
+        showToast("Garment not available.", "error");
+        window.location.hash = "#catalog";
+      }
+    }
+    
+    // Auto-sync inventory items card list in admin panel
+    if (currentAdminUser) {
+      renderAdminInventoryList();
+    }
+  });
+
   monitorAuthState((user) => {
     currentAdminUser = user;
     window.dispatchEvent(new Event("hashchange")); // Re-route safely based on new auth state
@@ -83,6 +77,31 @@ function initApp() {
   initJourneyTimeline();
   initMobileNav();
   initNewsletter();
+
+  // Add real-time listener stream mapping for global UI copy properties
+  subscribeHomepageSettings((content) => {
+    const titleEl = document.getElementById("live-hero-title");
+    const subtextEl = document.getElementById("live-hero-subtext");
+
+    if (titleEl && content.heroTitle) {
+      // Replaces typed escape characters with HTML break elements gracefully
+      titleEl.innerHTML = escapeHTML(content.heroTitle).replace(/\\n/g, "<br>").replace(/\n/g, "<br>");
+    }
+    if (subtextEl && content.heroSubtext) {
+      subtextEl.textContent = content.heroSubtext;
+    }
+
+    // Hydrate active editor input text boxes if administrative panel routes are populated
+    const inputTitle = document.getElementById("edit-hero-title");
+    const inputSubtext = document.getElementById("edit-hero-subtext");
+    if (inputTitle && inputSubtext) {
+      inputTitle.value = content.heroTitle || "";
+      inputSubtext.value = content.heroSubtext || "";
+    }
+  });
+
+  // Initialize action bindings for form interaction fields
+  initHomepageEditorForm();
 }
 
 if (document.readyState === "loading") {
@@ -244,6 +263,7 @@ function initRouter() {
       if (currentAdminUser) {
         showView("view-admin");
         setActiveNavLink("link-admin");
+        renderAdminInventoryList();
       } else {
         showView("view-login");
         setActiveNavLink("link-admin");
@@ -431,13 +451,13 @@ function renderCatalogGrid() {
     card.setAttribute("aria-label", `View details of ${item.name}`);
     card.innerHTML = `
       <div class="product-image-container">
-        <img src="${item.image}" alt="${item.name} - Custom tailoring Nairobi" loading="lazy" />
+        <img src="${item.image}" alt="${escapeHTML(item.name)} - Custom tailoring Nairobi" loading="lazy" />
         <div class="product-overlay">
           <span class="view-details-text">View Details</span>
         </div>
       </div>
       <div class="product-info">
-        <h3 class="product-name">${item.name}</h3>
+        <h3 class="product-name">${escapeHTML(item.name)}</h3>
         <span class="product-price">Ksh ${formatPrice(item.price)}</span>
       </div>
       <div class="card-shine"></div>
@@ -581,6 +601,8 @@ function loadProductDetails(productId) {
         return;
       }
 
+      const waWindow = window.open('', '_blank');
+
       try {
         const orderData = {
           customerName: clientName,
@@ -598,11 +620,14 @@ function loadProductDetails(productId) {
         
         showToast("Consultation ready. Opening WhatsApp chat...", "success");
         
-        setTimeout(() => {
-          window.open(waLink, "_blank");
-        }, 1200);
+        if (waWindow) {
+          waWindow.location.href = waLink;
+        } else {
+          window.location.href = waLink;
+        }
 
       } catch (err) {
+        if (waWindow) waWindow.close();
         console.error("Order submission failure:", err);
         showToast("Checkout pipeline error. Please try again.", "error");
       }
@@ -630,6 +655,76 @@ export function generateWhatsAppLink(productName, garmentColor, measurements, pr
 // TAILOR OPERATIONS / ADMIN PANEL CONTROLLER
 // -------------------------------------------------------------
 function initAdminDashboard() {
+  // Tabs Switch Navigation
+  const tabBtnConsultation = document.getElementById("tab-btn-consultations");
+  const tabBtnCatalog = document.getElementById("tab-btn-catalog");
+  const paneConsultation = document.getElementById("admin-pane-consultations");
+  const paneCatalog = document.getElementById("admin-pane-catalog");
+
+  if (tabBtnConsultation && tabBtnCatalog && paneConsultation && paneCatalog) {
+    tabBtnConsultation.addEventListener("click", () => {
+      tabBtnConsultation.classList.add("active");
+      tabBtnCatalog.classList.remove("active");
+      paneConsultation.style.display = "block";
+      paneCatalog.style.display = "none";
+    });
+
+    tabBtnCatalog.addEventListener("click", () => {
+      tabBtnCatalog.classList.add("active");
+      tabBtnConsultation.classList.remove("active");
+      paneConsultation.style.display = "none";
+      paneCatalog.style.display = "block";
+      renderAdminInventoryList();
+    });
+  }
+
+  // Admin panel simplified image uploading removed.
+
+  // Submit new product
+  const addProductForm = document.getElementById("form-add-product");
+  if (addProductForm) {
+    addProductForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("new-product-name").value.trim();
+      const category = document.getElementById("new-product-category").value;
+      const type = document.getElementById("new-product-type").value;
+      const price = Number(document.getElementById("new-product-price").value);
+      const description = document.getElementById("new-product-description").value.trim();
+
+      let imageUrl = "";
+
+      showToast("Syncing new item...", "success");
+
+      try {
+        imageUrl = document.getElementById("new-product-url").value.trim();
+        if (!imageUrl) {
+          showToast("Please paste a valid image link.", "error");
+          return;
+        }
+
+        const productData = {
+          name,
+          category,
+          type,
+          price,
+          description,
+          image: imageUrl
+        };
+
+        await addProduct(productData);
+        showToast(`Item "${name}" uploaded!`, "success");
+
+        // Reset inputs
+        addProductForm.reset();
+        
+      } catch (err) {
+        console.error("Garment write error:", err);
+        showToast("Failed to upload new garment.", "error");
+      }
+    });
+  }
+
   const queueForm = document.getElementById("form-queue-editor");
   if (queueForm) {
     queueForm.addEventListener("submit", async (e) => {
@@ -693,7 +788,7 @@ function initAdminDashboard() {
       orderCard.innerHTML = `
         <div class="order-row-header">
           <div>
-            <h4 class="order-client-name">${order.customerName}</h4>
+            <h4 class="order-client-name">${escapeHTML(order.customerName)}</h4>
             <span class="order-date">${orderDate} (EAT)</span>
           </div>
           <span class="order-price">Ksh ${formatPrice(order.price)}</span>
@@ -701,7 +796,7 @@ function initAdminDashboard() {
         
         <div class="order-row-body">
           <div class="order-details-meta">
-            <span class="order-product-name">${order.productName}</span>
+            <span class="order-product-name">${escapeHTML(order.productName)}</span>
             <span style="font-size: 0.8rem; color: var(--text-secondary);">ID: ${order.id}</span>
           </div>
           <div class="order-measurements-grid">
@@ -721,7 +816,7 @@ function initAdminDashboard() {
             </select>
           </div>
           
-          <button class="btn-row-whatsapp" data-client="${order.customerName}" data-product="${order.productName}">
+          <button class="btn-row-whatsapp" data-client="${escapeHTML(order.customerName)}" data-product="${escapeHTML(order.productName)}">
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.459h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
             </svg>
@@ -869,10 +964,149 @@ function showToast(msg, type = "success") {
 // -------------------------------------------------------------
 // GENERAL UTILS
 // -------------------------------------------------------------
+function escapeHTML(str) {
+  if (typeof str !== 'string') return str;
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  );
+}
+
 function formatPrice(number) {
   return Number(number).toLocaleString("en-KE");
 }
 
 function capitalize(str) {
   return str.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+
+/**
+ * Syncs and renders collection catalog components in administrative view
+ */
+function renderAdminInventoryList() {
+  const container = document.getElementById("admin-inventory-list");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (CATALOG_ITEMS.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; color: var(--text-secondary); padding: 3rem 0;">
+        No garments in lookbook collection.
+      </div>
+    `;
+    return;
+  }
+
+  CATALOG_ITEMS.forEach(product => {
+    const itemRow = document.createElement("div");
+    itemRow.className = "inventory-item";
+    itemRow.innerHTML = `
+      <img src="${product.image}" alt="${escapeHTML(product.name)}" class="inventory-thumb" />
+      <div class="inventory-details">
+        <h4>${escapeHTML(product.name)}</h4>
+        <p>${escapeHTML(product.description).substring(0, 120)}${product.description.length > 120 ? '...' : ''}</p>
+        <div class="inventory-meta">
+          <span class="inventory-category">${escapeHTML(product.category)}</span>
+          <span class="inventory-type">${escapeHTML(product.type)}</span>
+          <span style="color: var(--text-primary); font-weight: 750;">Ksh ${formatPrice(product.price)}</span>
+        </div>
+      </div>
+      <button class="btn-remove-inventory" data-id="${product.id}" data-name="${product.name}">
+        Remove
+      </button>
+    `;
+
+    const deleteBtn = itemRow.querySelector(".btn-remove-inventory");
+    deleteBtn.addEventListener("click", async () => {
+      const pId = deleteBtn.getAttribute("data-id");
+      const pName = deleteBtn.getAttribute("data-name");
+      
+      if (confirm(`Are you sure you want to permanently remove "${pName}" from the catalog?`)) {
+        try {
+          showToast(`Deleting "${pName}"...`, "success");
+          await deleteProduct(pId);
+          showToast("Garment removed successfully.", "success");
+        } catch (err) {
+          console.error("Failed to delete product:", err);
+          showToast("Error deleting garment.", "error");
+        }
+      }
+    });
+
+    container.appendChild(itemRow);
+  });
+}
+
+/**
+ * Resizes and compresses image files on the client side using HTML5 Canvas
+ */
+async function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error("Canvas compression failed"));
+          }
+        }, "image/jpeg", quality);
+      };
+      img.onerror = (err) => reject(err);
+      img.src = e.target.result;
+    };
+    reader.onerror = (err) => reject(err);
+    reader.readAsDataURL(file);
+  });
+}
+
+function initHomepageEditorForm() {
+  const editorForm = document.getElementById("form-homepage-editor");
+  if (!editorForm) return;
+
+  editorForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const heroTitle = document.getElementById("edit-hero-title").value.trim();
+    const heroSubtext = document.getElementById("edit-hero-subtext").value.trim();
+
+    try {
+      showToast("Syncing public page configurations...", "success");
+      await updateHomepageSettings({ heroTitle, heroSubtext });
+      showToast("Homepage adjustments deployed live!", "success");
+    } catch (err) {
+      console.error(err);
+      showToast("Error updating corporate display profiles.", "error");
+    }
+  });
 }
