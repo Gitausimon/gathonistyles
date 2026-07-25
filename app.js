@@ -695,31 +695,38 @@ function initAdminDashboard() {
 
       const uploadStatus = document.getElementById('upload-status');
       if (uploadStatus) {
-        uploadStatus.textContent = "Processing & uploading image...";
+        uploadStatus.textContent = "Uploading image...";
         uploadStatus.style.color = "var(--text-secondary)";
       }
 
-      let fileToUpload = file;
       try {
-        const compressedBlob = await compressImage(file, 1200, 1200, 0.85);
-        fileToUpload = new File([compressedBlob], "photo.jpg", { type: "image/jpeg" });
-      } catch (err) {
-        console.warn("Compression failed, uploading original...", err);
-      }
+        // Attempt compression with a timeout — skip if it takes too long or fails
+        let fileToUpload = file;
 
-      const formData = new FormData();
-      formData.append('file', fileToUpload);
+        // Only compress if the file is larger than 1MB
+        if (file.size > 1024 * 1024) {
+          try {
+            const compressedBlob = await Promise.race([
+              compressImage(file, 1200, 1200, 0.85),
+              new Promise((_, reject) => setTimeout(() => reject(new Error("Compression timeout")), 10000))
+            ]);
+            fileToUpload = new File([compressedBlob], "photo.jpg", { type: "image/jpeg" });
+          } catch (compressErr) {
+            console.warn("Compression skipped, uploading original:", compressErr.message);
+          }
+        }
 
-      // Your specific preset name goes here
-      formData.append('upload_preset', 'styles_by_gathoni');
+        if (uploadStatus) {
+          uploadStatus.textContent = "Sending to cloud...";
+        }
 
-      // Your specific Cloud Name goes here
-      const cloudName = 'vbe25dhd';
+        const formData = new FormData();
+        formData.append('file', fileToUpload);
+        formData.append('upload_preset', 'styles_by_gathoni');
 
-      // This builds the exact URL your image will be sent to
-      const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+        const cloudName = 'vbe25dhd';
+        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
-      try {
         const response = await fetch(cloudinaryUrl, {
           method: 'POST',
           body: formData
@@ -731,9 +738,8 @@ function initAdminDashboard() {
           throw new Error(data.error?.message || "Cloudinary upload failed");
         }
 
-        // The permanent link you will save to your Firebase database
         const imageUrl = data.secure_url;
-        console.log("Here is the permanent link:", imageUrl);
+        console.log("Permanent image link:", imageUrl);
 
         document.getElementById('new-product-url').value = imageUrl;
         if (uploadStatus) {
@@ -743,14 +749,14 @@ function initAdminDashboard() {
       } catch (error) {
         console.error("Upload failed:", error);
         document.getElementById('new-product-url').value = "";
-        
-        const uploadPreview = document.getElementById('upload-preview');
+
         if (uploadPreview) uploadPreview.style.display = "none";
 
         if (uploadStatus) {
-          uploadStatus.textContent = "Upload failed. Please try again or use a smaller image.";
+          uploadStatus.textContent = "Upload failed: " + error.message;
           uploadStatus.style.color = "var(--error, #dc3545)";
         }
+        showToast("Image upload failed. " + error.message, "error");
       }
     });
   }
