@@ -72,74 +72,23 @@ const LS_KEYS = {
   CATALOG: "boutique_catalog"
 };
 
-// Default lookbook items to seed if empty
-const DEFAULT_CATALOG = [
-  {
-    id: "signature-column-dress",
-    name: "Signature Column Dress",
-    category: "dresses",
-    price: 7200,
-    type: "dress",
-    image: "https://res.cloudinary.com/vbe25dhd/image/upload/v1785011791/rwwxgzfsjy6lqthxalwu.jpg",
-    description: "An elegant, floor-skimming column gown sculpted for a dramatic yet minimal silhouette. Crafted from premium breathable cotton-linen blend, perfect for both corporate elegance and formal evening dinners in Nairobi."
-  },
-  {
-    id: "wool-blend-power-suit",
-    name: "Wool-Blend Power Suit",
-    category: "official",
-    price: 12500,
-    type: "official",
-    image: "https://res.cloudinary.com/vbe25dhd/image/upload/v1785011794/zwglzxku1qmffgnynkp9.jpg",
-    description: "A sharp, structured double-breasted blazer and high-waisted trouser set. Designed to empower. Made with high-grade tropical wool-blend fabric, tailored precisely to sit flat on the shoulders and waist."
-  },
-  {
-    id: "pleated-wrap-skirt",
-    name: "Pleated Wrap Skirt",
-    category: "casual",
-    price: 4800,
-    type: "skirt",
-    image: "https://res.cloudinary.com/vbe25dhd/image/upload/v1785011796/ec7d36enahgijrxdnvaw.jpg",
-    description: "A versatile modern wrap skirt featuring hand-pressed pleats and an adjustable waist tie. Cut in a flattering mid-length silhouette that flows naturally. Can be dressed up for weddings or down for brunch."
-  },
-  {
-    id: "cowl-neck-slip-dress",
-    name: "Cowl-Neck Slip Dress",
-    category: "dresses",
-    price: 6900,
-    type: "dress",
-    image: "https://res.cloudinary.com/vbe25dhd/image/upload/v1785011799/edjcn2wljhqixryvolif.jpg",
-    description: "A bias-cut cowl neck slip dress that fluidly contours your body curves. Features thin adjustable straps and an open back design. Extremely luxurious feel, hand-finished using high-end Nairobi silk-satin."
-  }
-];
+// One-time migration: purge old hardcoded mock catalog & order data from localStorage
+// so deleted items stop reappearing. Runs once per browser.
+if (!localStorage.getItem("boutique_mock_purged_v2")) {
+  localStorage.removeItem(LS_KEYS.CATALOG);
+  localStorage.removeItem(LS_KEYS.ORDERS);
+  localStorage.setItem("boutique_mock_purged_v2", "true");
+}
 
-// Seed mock data if empty
+// Seed default queue/orders if empty (LocalStorage fallback only)
 if (!localStorage.getItem(LS_KEYS.QUEUE)) {
   localStorage.setItem(LS_KEYS.QUEUE, "4"); // Default 4 days
 }
 if (!localStorage.getItem(LS_KEYS.ORDERS)) {
-  localStorage.setItem(LS_KEYS.ORDERS, JSON.stringify([
-    {
-      id: "mock-1",
-      customerName: "Wanjiku Njoroge",
-      productName: "Bespoke Royal Midi Dress",
-      price: 6500,
-      measurements: { bust: 92, waist: 74, hips: 100, length: 110 },
-      status: "consultation",
-      timestamp: new Date(Date.now() - 3600000 * 2).toISOString() // 2 hours ago
-    },
-    {
-      id: "mock-2",
-      customerName: "Amina Mohamed",
-      productName: "Tailored Linen Silhouette Skirt",
-      price: 4200,
-      measurements: { waist: 68, hips: 94, length: 80 },
-      status: "in-production",
-      timestamp: new Date(Date.now() - 3600000 * 24).toISOString() // 24 hours ago
-    }
-  ]));
+  localStorage.setItem(LS_KEYS.ORDERS, JSON.stringify([]));
 }
 if (!localStorage.getItem(LS_KEYS.CATALOG)) {
-  localStorage.setItem(LS_KEYS.CATALOG, JSON.stringify(DEFAULT_CATALOG));
+  localStorage.setItem(LS_KEYS.CATALOG, JSON.stringify([]));
 }
 
 // Event system for local updates simulation (pub-sub)
@@ -387,22 +336,20 @@ export async function logoutAdmin() {
 export async function subscribeCatalog(callback) {
   if (!useLocalStorage && db) {
     try {
-      const { collection, onSnapshot, doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+      const { collection, onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
       const collRef = collection(db, "catalog");
       
-      return onSnapshot(collRef, async (snapshot) => {
-        if (snapshot.empty) {
-          callback([]);
-          return;
-        }
-        
+      return onSnapshot(collRef, (snapshot) => {
         const catalog = [];
-        snapshot.forEach(doc => {
-          catalog.push({ id: doc.id, ...doc.data() });
+        snapshot.forEach(docSnap => {
+          catalog.push({ id: docSnap.id, ...docSnap.data() });
         });
         callback(catalog);
       }, (error) => {
         console.error("Firestore catalog query failed, falling back to LocalStorage:", error);
+        // Fall back to localStorage on Firestore error
+        const localCatalog = JSON.parse(localStorage.getItem(LS_KEYS.CATALOG) || "[]");
+        callback(localCatalog);
       });
     } catch (e) {
       console.error("Error loading Firestore catalog functions, falling back:", e);
@@ -437,16 +384,15 @@ export async function addProduct(productData) {
   };
 
   if (!useLocalStorage && db) {
-    try {
-      const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-      const collRef = collection(db, "catalog");
-      const docRef = await addDoc(collRef, newProduct);
-      return docRef.id;
-    } catch (e) {
-      console.error("Firestore product write failed, updating LocalStorage:", e);
-    }
+    // When Firestore is active, write to Firestore only.
+    // The onSnapshot listener in subscribeCatalog will pick up the change automatically.
+    const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const collRef = collection(db, "catalog");
+    const docRef = await addDoc(collRef, newProduct);
+    return docRef.id;
   }
 
+  // LocalStorage fallback (only when Firestore is not active)
   const catalog = JSON.parse(localStorage.getItem(LS_KEYS.CATALOG) || "[]");
   newProduct.id = "product-" + Date.now();
   catalog.push(newProduct);
@@ -462,16 +408,15 @@ export async function addProduct(productData) {
  */
 export async function deleteProduct(productId) {
   if (!useLocalStorage && db) {
-    try {
-      const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-      const docRef = doc(db, "catalog", productId);
-      await deleteDoc(docRef);
-      return;
-    } catch (e) {
-      console.error("Firestore product delete failed, deleting from LocalStorage:", e);
-    }
+    // When Firestore is active, delete from Firestore only.
+    // The onSnapshot listener will automatically update the UI.
+    const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const docRef = doc(db, "catalog", productId);
+    await deleteDoc(docRef);
+    return;
   }
 
+  // LocalStorage fallback (only when Firestore is not active)
   let catalog = JSON.parse(localStorage.getItem(LS_KEYS.CATALOG) || "[]");
   catalog = catalog.filter(p => p.id !== productId);
   localStorage.setItem(LS_KEYS.CATALOG, JSON.stringify(catalog));

@@ -4,14 +4,14 @@
  * Hosts Lenis smooth scrolling, GSAP animations, 3D Card Tilt, and Admin Stats ring.
  */
 
-import { 
-  subscribeQueueStatus, 
-  updateQueueStatus, 
-  subscribeOrders, 
-  addOrder, 
-  updateOrderStatus, 
-  monitorAuthState, 
-  loginAdmin, 
+import {
+  subscribeQueueStatus,
+  updateQueueStatus,
+  subscribeOrders,
+  addOrder,
+  updateOrderStatus,
+  monitorAuthState,
+  loginAdmin,
   logoutAdmin,
   subscribeCatalog,
   addProduct,
@@ -33,6 +33,7 @@ let CATALOG_ITEMS = [];
 
 // App State
 let activeFilters = "all";
+
 let _heroAnimated = false;
 
 // -------------------------------------------------------------
@@ -42,7 +43,7 @@ function initApp() {
   // Subscribe to public Dynamic Lookbook catalog changes from Database
   subscribeCatalog((items) => {
     CATALOG_ITEMS = items;
-    
+
     // Auto-refresh main page views if active
     const hash = window.location.hash || "#home";
     if (hash === "#catalog") {
@@ -57,7 +58,7 @@ function initApp() {
         window.location.hash = "#catalog";
       }
     }
-    
+
     // Auto-sync inventory items card list in admin panel
     if (currentAdminUser) {
       renderAdminInventoryList();
@@ -234,7 +235,7 @@ function initJourneyTimeline() {
 function initRouter() {
   const handleRouting = () => {
     const hash = window.location.hash || "#home";
-    
+
     // Hide all views first
     document.querySelectorAll(".spa-view").forEach(view => {
       view.style.display = "none";
@@ -274,7 +275,7 @@ function initRouter() {
     }
 
     window.scrollTo(0, 0);
-    
+
     // Refresh scroll triggers as page layout height has changed
     if (window.ScrollTrigger) {
       setTimeout(() => ScrollTrigger.refresh(), 100);
@@ -309,7 +310,7 @@ function initRouter() {
       e.preventDefault();
       const email = document.getElementById("login-email").value;
       const pass = document.getElementById("login-password").value;
-      
+
       try {
         await loginAdmin(email, pass);
         showToast("Authenticated successfully.", "success");
@@ -388,10 +389,10 @@ function initNewsletter() {
 // -------------------------------------------------------------
 function initQueueBanner() {
   const banner = document.getElementById("wait-time-banner");
-  
+
   subscribeQueueStatus((days) => {
     if (!banner) return;
-    
+
     // UI styling based on capacity load
     if (days <= 2) {
       banner.className = "wait-time-banner low-demand";
@@ -493,19 +494,19 @@ function bindCardTilt(card) {
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     // Normalize coordinates to ranges between -0.5 and 0.5
     const px = (x / rect.width) - 0.5;
     const py = (y / rect.height) - 0.5;
-    
+
     // Specular shine overlay tracking variables
     card.style.setProperty("--mouse-x", `${x}px`);
     card.style.setProperty("--mouse-y", `${y}px`);
-    
+
     // Rotations degrees (max 6 degrees tilt)
     const rotateX = -py * 12;
     const rotateY = px * 12;
-    
+
     card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
   });
 
@@ -519,7 +520,7 @@ function bindCardTilt(card) {
 // -------------------------------------------------------------
 function loadProductDetails(productId) {
   const product = CATALOG_ITEMS.find(p => p.id === productId);
-  
+
   if (!product) {
     showToast("Garment not found in catalog", "error");
     window.location.hash = "#catalog";
@@ -537,7 +538,7 @@ function loadProductDetails(productId) {
   // Mount components
   document.getElementById("pdp-silhouette-container").innerHTML = renderSilhouette();
   document.getElementById("pdp-form-container").innerHTML = renderMeasurementForm(product.type);
-  
+
   // Bind form focus zone highlighter scripts
   bindFormEvents(document.getElementById("pdp-form-container"));
 
@@ -549,7 +550,7 @@ function loadProductDetails(productId) {
       duration: 1,
       ease: "power3.out"
     });
-    
+
     gsap.from(".pdp-scroll-right > *", {
       opacity: 0,
       y: 40,
@@ -572,23 +573,23 @@ function loadProductDetails(productId) {
   if (form) {
     form.onsubmit = async (e) => {
       e.preventDefault();
-      
+
       const clientNameInput = document.getElementById("client-name");
       const clientName = clientNameInput ? clientNameInput.value.trim() : "Anonymous";
-      
+
       const colorInput = document.getElementById("garment-color");
       const garmentColor = colorInput ? colorInput.value : "Not specified";
 
       const measurements = {};
       const fields = requiredMeasurements[product.type] || requiredMeasurements.dress;
-      
+
       let validationError = null;
 
       fields.forEach(field => {
         const fieldId = field.replace(/\s+/g, "-");
         const valInput = document.getElementById(`input-${fieldId}`);
         const val = valInput ? Number(valInput.value) : 0;
-        
+
         const range = measurementRanges[field];
         if (range && (val < range.min || val > range.max)) {
           validationError = `Invalid ${field}. Must be between ${range.min} and ${range.max} cm.`;
@@ -612,14 +613,14 @@ function loadProductDetails(productId) {
           measurements: measurements,
           status: "consultation"
         };
-        
+
         showToast("Saving measurements sheet...", "success");
         await addOrder(orderData);
-        
+
         const waLink = generateWhatsAppLink(product.name, garmentColor, measurements, product.price, clientName);
-        
+
         showToast("Consultation ready. Opening WhatsApp chat...", "success");
-        
+
         if (waWindow) {
           waWindow.location.href = waLink;
         } else {
@@ -640,14 +641,14 @@ export function generateWhatsAppLink(productName, garmentColor, measurements, pr
   let text = `Hello Gathoni Styles! I'd like to order a custom-tailored *${productName}* in *${garmentColor}* (Ksh ${formatPrice(price)}).\n\n`;
   text += `*Client Name:* ${clientName}\n`;
   text += `*My Measurements (in cm):*\n`;
-  
+
   for (const [key, val] of Object.entries(measurements)) {
     const prettyKey = key.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
     text += `- ${prettyKey}: ${val} cm\n`;
   }
-  
+
   text += `\nNo payment is required until measurements are reviewed and confirmed over our chat.`;
-  
+
   return `https://wa.me/${TAILOR_WHATSAPP_PHONE}?text=${encodeURIComponent(text)}`;
 }
 
@@ -681,9 +682,16 @@ function initAdminDashboard() {
   // Cloudinary image upload integration
   const photoUpload = document.getElementById('photoUpload');
   if (photoUpload) {
-    photoUpload.addEventListener('change', async function(event) {
+    photoUpload.addEventListener('change', async function (event) {
       const file = event.target.files[0];
       if (!file) return;
+
+      // Show immediate local preview
+      const uploadPreview = document.getElementById('upload-preview');
+      if (uploadPreview) {
+        uploadPreview.src = URL.createObjectURL(file);
+        uploadPreview.style.display = "block";
+      }
 
       const uploadStatus = document.getElementById('upload-status');
       if (uploadStatus) {
@@ -701,13 +709,13 @@ function initAdminDashboard() {
 
       const formData = new FormData();
       formData.append('file', fileToUpload);
-      
+
       // Your specific preset name goes here
-      formData.append('upload_preset', 'styles_by_gathoni'); 
+      formData.append('upload_preset', 'styles_by_gathoni');
 
       // Your specific Cloud Name goes here
-      const cloudName = 'vbe25dhd'; 
-      
+      const cloudName = 'vbe25dhd';
+
       // This builds the exact URL your image will be sent to
       const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
@@ -718,7 +726,7 @@ function initAdminDashboard() {
         });
 
         const data = await response.json();
-        
+
         if (!response.ok) {
           throw new Error(data.error?.message || "Cloudinary upload failed");
         }
@@ -726,7 +734,7 @@ function initAdminDashboard() {
         // The permanent link you will save to your Firebase database
         const imageUrl = data.secure_url;
         console.log("Here is the permanent link:", imageUrl);
-        
+
         document.getElementById('new-product-url').value = imageUrl;
         if (uploadStatus) {
           uploadStatus.textContent = "Upload successful!";
@@ -735,6 +743,10 @@ function initAdminDashboard() {
       } catch (error) {
         console.error("Upload failed:", error);
         document.getElementById('new-product-url').value = "";
+        
+        const uploadPreview = document.getElementById('upload-preview');
+        if (uploadPreview) uploadPreview.style.display = "none";
+
         if (uploadStatus) {
           uploadStatus.textContent = "Upload failed. Please try again or use a smaller image.";
           uploadStatus.style.color = "var(--error, #dc3545)";
@@ -781,6 +793,12 @@ function initAdminDashboard() {
         // Reset inputs
         addProductForm.reset();
         
+        // Hide preview
+        const uploadPreview = document.getElementById('upload-preview');
+        if (uploadPreview) uploadPreview.style.display = "none";
+        document.getElementById('upload-status').textContent = "";
+        document.getElementById('new-product-url').value = "";
+
       } catch (err) {
         console.error("Garment write error:", err);
         showToast("Failed to upload new garment.", "error");
@@ -804,7 +822,7 @@ function initAdminDashboard() {
 
   // Subscribe to real-time database orders changes
   const ordersListContainer = document.getElementById("admin-orders-list");
-  
+
   subscribeOrders((orders) => {
     // Sync DB status indicator badge
     const dbBadge = document.getElementById("db-status-badge");
@@ -832,7 +850,7 @@ function initAdminDashboard() {
     orders.forEach(order => {
       const orderCard = document.createElement("div");
       orderCard.className = "order-row-card";
-      
+
       const orderDate = new Date(order.timestamp).toLocaleString("en-KE", {
         timeZone: "Africa/Nairobi",
         dateStyle: "medium",
@@ -937,7 +955,7 @@ function updateAnalyticsCards(orders) {
   });
 
   const activeCount = orders.length - completedCount;
-  
+
   // Animate counter values
   animateCounterValue("analytics-active-count", activeCount);
   animateCounterValue("count-consultations", consultationsCount);
@@ -988,7 +1006,7 @@ function showToast(msg, type = "success") {
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
 
-  const icon = type === "success" 
+  const icon = type === "success"
     ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`
     : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
 
@@ -999,7 +1017,7 @@ function showToast(msg, type = "success") {
   `;
 
   container.appendChild(toast);
-  
+
   // Transition slide in
   setTimeout(() => {
     toast.classList.add("show");
@@ -1029,7 +1047,7 @@ function showToast(msg, type = "success") {
 // -------------------------------------------------------------
 function escapeHTML(str) {
   if (typeof str !== 'string') return str;
-  return str.replace(/[&<>'"]/g, 
+  return str.replace(/[&<>'"]/g,
     tag => ({
       '&': '&amp;',
       '<': '&lt;',
@@ -1089,7 +1107,7 @@ function renderAdminInventoryList() {
     deleteBtn.addEventListener("click", async () => {
       const pId = deleteBtn.getAttribute("data-id");
       const pName = deleteBtn.getAttribute("data-name");
-      
+
       if (confirm(`Are you sure you want to permanently remove "${pName}" from the catalog?`)) {
         try {
           showToast(`Deleting "${pName}"...`, "success");
