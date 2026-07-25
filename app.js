@@ -678,7 +678,57 @@ function initAdminDashboard() {
     });
   }
 
-  // Admin panel simplified image uploading removed.
+  // Cloudinary image upload integration
+  const photoUpload = document.getElementById('photoUpload');
+  if (photoUpload) {
+    photoUpload.addEventListener('change', async function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const uploadStatus = document.getElementById('upload-status');
+      if (uploadStatus) {
+        uploadStatus.textContent = "Uploading image...";
+        uploadStatus.style.color = "var(--text-secondary)";
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      // Your specific preset name goes here
+      formData.append('upload_preset', 'styles_by_gathoni'); 
+
+      // Your specific Cloud Name goes here
+      const cloudName = 'vibe25dhd'; 
+      
+      // This builds the exact URL your image will be sent to
+      const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+
+      try {
+        const response = await fetch(cloudinaryUrl, {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        // The permanent link you will save to your Firebase database
+        const imageUrl = data.secure_url;
+        console.log("Here is the permanent link:", imageUrl);
+        
+        document.getElementById('new-product-url').value = imageUrl;
+        if (uploadStatus) {
+          uploadStatus.textContent = "Upload successful!";
+          uploadStatus.style.color = "var(--success, #28a745)";
+        }
+      } catch (error) {
+        console.error("Upload failed:", error);
+        if (uploadStatus) {
+          uploadStatus.textContent = "Upload failed. Please try again.";
+          uploadStatus.style.color = "var(--error, #dc3545)";
+        }
+      }
+    });
+  }
 
   // Submit new product
   const addProductForm = document.getElementById("form-add-product");
@@ -699,7 +749,7 @@ function initAdminDashboard() {
       try {
         imageUrl = document.getElementById("new-product-url").value.trim();
         if (!imageUrl) {
-          showToast("Please paste a valid image link.", "error");
+          showToast("Please wait for the image upload to complete.", "error");
           return;
         }
 
