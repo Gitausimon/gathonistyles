@@ -687,12 +687,20 @@ function initAdminDashboard() {
 
       const uploadStatus = document.getElementById('upload-status');
       if (uploadStatus) {
-        uploadStatus.textContent = "Uploading image...";
+        uploadStatus.textContent = "Processing & uploading image...";
         uploadStatus.style.color = "var(--text-secondary)";
       }
 
+      let fileToUpload = file;
+      try {
+        const compressedBlob = await compressImage(file, 1200, 1200, 0.85);
+        fileToUpload = new File([compressedBlob], "photo.jpg", { type: "image/jpeg" });
+      } catch (err) {
+        console.warn("Compression failed, uploading original...", err);
+      }
+
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', fileToUpload);
       
       // Your specific preset name goes here
       formData.append('upload_preset', 'styles_by_gathoni'); 
@@ -710,6 +718,10 @@ function initAdminDashboard() {
         });
 
         const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error?.message || "Cloudinary upload failed");
+        }
 
         // The permanent link you will save to your Firebase database
         const imageUrl = data.secure_url;
@@ -722,8 +734,9 @@ function initAdminDashboard() {
         }
       } catch (error) {
         console.error("Upload failed:", error);
+        document.getElementById('new-product-url').value = "";
         if (uploadStatus) {
-          uploadStatus.textContent = "Upload failed. Please try again.";
+          uploadStatus.textContent = "Upload failed. Please try again or use a smaller image.";
           uploadStatus.style.color = "var(--error, #dc3545)";
         }
       }
@@ -748,8 +761,8 @@ function initAdminDashboard() {
 
       try {
         imageUrl = document.getElementById("new-product-url").value.trim();
-        if (!imageUrl) {
-          showToast("Please wait for the image upload to complete.", "error");
+        if (!imageUrl || imageUrl === "undefined" || !imageUrl.startsWith("http")) {
+          showToast("Please wait for the image upload to complete fully, or try re-uploading.", "error");
           return;
         }
 
