@@ -392,13 +392,7 @@ export async function subscribeCatalog(callback) {
       
       return onSnapshot(collRef, async (snapshot) => {
         if (snapshot.empty) {
-          console.log("Firestore catalog collection empty. Seeding DEFAULT_CATALOG items...");
-          // Seed Firestore with default items so it's not barren
-          for (const item of DEFAULT_CATALOG) {
-            const docRef = doc(db, "catalog", item.id);
-            await setDoc(docRef, item);
-          }
-          // The snapshot listener will trigger again on the additions
+          callback([]);
           return;
         }
         
