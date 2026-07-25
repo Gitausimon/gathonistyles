@@ -706,7 +706,7 @@ function initAdminDashboard() {
       formData.append('upload_preset', 'styles_by_gathoni'); 
 
       // Your specific Cloud Name goes here
-      const cloudName = 'vibe25dhd'; 
+      const cloudName = 'vbe25dhd'; 
       
       // This builds the exact URL your image will be sent to
       const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;

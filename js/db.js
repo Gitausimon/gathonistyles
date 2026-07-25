@@ -80,7 +80,7 @@ const DEFAULT_CATALOG = [
     category: "dresses",
     price: 7200,
     type: "dress",
-    image: "assets/dress_editorial.png",
+    image: "https://res.cloudinary.com/vbe25dhd/image/upload/v1785011791/rwwxgzfsjy6lqthxalwu.jpg",
     description: "An elegant, floor-skimming column gown sculpted for a dramatic yet minimal silhouette. Crafted from premium breathable cotton-linen blend, perfect for both corporate elegance and formal evening dinners in Nairobi."
   },
   {
@@ -89,7 +89,7 @@ const DEFAULT_CATALOG = [
     category: "official",
     price: 12500,
     type: "official",
-    image: "assets/official_editorial.png",
+    image: "https://res.cloudinary.com/vbe25dhd/image/upload/v1785011794/zwglzxku1qmffgnynkp9.jpg",
     description: "A sharp, structured double-breasted blazer and high-waisted trouser set. Designed to empower. Made with high-grade tropical wool-blend fabric, tailored precisely to sit flat on the shoulders and waist."
   },
   {
@@ -98,7 +98,7 @@ const DEFAULT_CATALOG = [
     category: "casual",
     price: 4800,
     type: "skirt",
-    image: "assets/casual_editorial.png",
+    image: "https://res.cloudinary.com/vbe25dhd/image/upload/v1785011796/ec7d36enahgijrxdnvaw.jpg",
     description: "A versatile modern wrap skirt featuring hand-pressed pleats and an adjustable waist tie. Cut in a flattering mid-length silhouette that flows naturally. Can be dressed up for weddings or down for brunch."
   },
   {
@@ -107,7 +107,7 @@ const DEFAULT_CATALOG = [
     category: "dresses",
     price: 6900,
     type: "dress",
-    image: "assets/hero_editorial.png",
+    image: "https://res.cloudinary.com/vbe25dhd/image/upload/v1785011799/edjcn2wljhqixryvolif.jpg",
     description: "A bias-cut cowl neck slip dress that fluidly contours your body curves. Features thin adjustable straps and an open back design. Extremely luxurious feel, hand-finished using high-end Nairobi silk-satin."
   }
 ];
