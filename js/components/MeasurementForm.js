@@ -159,7 +159,7 @@ export function renderMeasurementForm(garmentType) {
         <div class="video-ratio-box">
           <!-- Unlisted-style sewing tutorial video embedding -->
           <iframe 
-            src="https://www.youtube.com/embed/RAMvIQ9v9Zg" 
+            src="https://www.tiktok.com/embed/v2/7619972623773994248" 
             title="Tailoring Measurement Video Guide" 
             frameborder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
