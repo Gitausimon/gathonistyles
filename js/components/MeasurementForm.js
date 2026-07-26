@@ -101,7 +101,7 @@ export function renderMeasurementForm(garmentType) {
             <p>Watch our 2-minute video guide</p>
           </div>
         </div>
-        <button type="button" class="btn-tutorial-open" id="btn-open-video">Watch Video</button>
+        <a href="https://www.tiktok.com/@style_by_gathoni/video/7619972623773994248" target="_blank" rel="noopener noreferrer" class="btn-tutorial-open" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Watch on TikTok</a>
       </div>
 
       <!-- Rendered Inputs -->
@@ -150,27 +150,6 @@ export function renderMeasurementForm(garmentType) {
       </button>
       <span class="trust-subtitle">No payment required until measurements are confirmed.</span>
     </form>
-
-    <!-- Video Modal Container (Hidden by default) -->
-    <div id="video-tutorial-modal" class="modal-overlay">
-      <div class="modal-card">
-        <button type="button" class="modal-close" id="btn-close-video" aria-label="Close tutorial">×</button>
-        <h4 class="modal-title">How to Measure Yourself</h4>
-        <div class="video-ratio-box">
-          <!-- Unlisted-style sewing tutorial video embedding -->
-          <iframe 
-            src="https://www.tiktok.com/embed/v2/7619972623773994248" 
-            title="Tailoring Measurement Video Guide" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            allowfullscreen>
-          </iframe>
-        </div>
-        <div class="modal-footer">
-          <p>Tip: Have a friend help you read the tape measure flat against your skin. Stand naturally; don't suck in your breath.</p>
-        </div>
-      </div>
-    </div>
   `;
 }
 
@@ -221,28 +200,4 @@ export function bindFormEvents(formContainer) {
       }
     });
   });
-
-  // Video modal toggle
-  const openVideoBtn = formContainer.querySelector("#btn-open-video");
-  const closeVideoBtn = formContainer.querySelector("#btn-close-video");
-  const modal = formContainer.querySelector("#video-tutorial-modal");
-
-  if (openVideoBtn && modal) {
-    openVideoBtn.addEventListener("click", () => {
-      modal.classList.add("active");
-    });
-  }
-
-  if (closeVideoBtn && modal) {
-    closeVideoBtn.addEventListener("click", () => {
-      modal.classList.remove("active");
-    });
-    
-    // Close on overlay click
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        modal.classList.remove("active");
-      }
-    });
-  }
 }
