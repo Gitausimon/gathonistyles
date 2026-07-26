@@ -263,6 +263,32 @@ export async function updateOrderStatus(orderId, newStatus) {
   }
 }
 
+/**
+ * Updates the amount paid for an order
+ * @param {string} orderId 
+ * @param {number} amountPaid 
+ */
+export async function updateOrderAmountPaid(orderId, amountPaid) {
+  if (!useLocalStorage && db) {
+    try {
+      const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+      const docRef = doc(db, "orders", orderId);
+      await updateDoc(docRef, { amountPaid: amountPaid });
+      return;
+    } catch (e) {
+      console.error("Firestore status write failed, writing to LocalStorage:", e);
+    }
+  }
+
+  const orders = JSON.parse(localStorage.getItem(LS_KEYS.ORDERS) || "[]");
+  const target = orders.find(o => o.id === orderId);
+  if (target) {
+    target.amountPaid = amountPaid;
+    localStorage.setItem(LS_KEYS.ORDERS, JSON.stringify(orders));
+    triggerLocalChange("orders", orders);
+  }
+}
+
 // -------------------------------------------------------------
 // AUTHENTICATION INTERFACE
 // -------------------------------------------------------------

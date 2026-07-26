@@ -10,6 +10,7 @@ import {
   subscribeOrders,
   addOrder,
   updateOrderStatus,
+  updateOrderAmountPaid,
   monitorAuthState,
   loginAdmin,
   logoutAdmin,
@@ -396,10 +397,10 @@ function initQueueBanner() {
     // UI styling based on capacity load
     if (days <= 2) {
       banner.className = "wait-time-banner low-demand";
-      banner.textContent = `Current production wait time: ${days} ${days === 1 ? 'day' : 'days'}`;
+      banner.textContent = `Estimated wait time: ${days} ${days === 1 ? 'day' : 'days'}`;
     } else {
       banner.className = "wait-time-banner high-demand";
-      banner.textContent = `High demand: Current production wait time is ${days} days`;
+      banner.textContent = `Estimated wait time: ${days} days`;
     }
 
     // Update queue editor input in admin panel if present
@@ -722,7 +723,7 @@ function initAdminDashboard() {
 
         const formData = new FormData();
         formData.append('file', fileToUpload);
-        formData.append('upload_preset', 'styles_by_gathoni');
+        formData.append('upload_preset', 'gathoni styles');
 
         const cloudName = 'vbe25dhd';
         const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
@@ -891,6 +892,22 @@ function initAdminDashboard() {
           </div>
         </div>
 
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+            <label style="font-size: 0.72rem; font-weight: 800; color: var(--text-secondary); letter-spacing: 0.05em;">AMOUNT PAID (Ksh)</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="number" class="amount-paid-input measurement-input" data-order-id="${order.id}" value="${order.amountPaid || 0}" style="width: 120px; height: 36px; padding: 0.5rem;" />
+              <button class="btn-save-amount btn-outline" data-order-id="${order.id}" style="height: 36px; padding: 0 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); border-style: dashed;">Save</button>
+            </div>
+          </div>
+          <div style="text-align: right; padding-right: 0.5rem;">
+            <label style="font-size: 0.72rem; font-weight: 800; color: var(--text-secondary); letter-spacing: 0.05em;">BALANCE</label>
+            <div style="font-size: 1.1rem; font-weight: 700; color: ${order.price - (order.amountPaid || 0) <= 0 ? '#4ade80' : 'var(--text-primary)'};">
+              Ksh ${formatPrice(Math.max(0, order.price - (order.amountPaid || 0)))}
+            </div>
+          </div>
+        </div>
+
         <div class="order-row-actions">
           <div>
             <label style="font-size: 0.72rem; font-weight: 800; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; letter-spacing: 0.05em;">WORKLOAD STATUS</label>
@@ -903,7 +920,7 @@ function initAdminDashboard() {
             </select>
           </div>
           
-          <button class="btn-row-whatsapp" data-client="${escapeHTML(order.customerName)}" data-product="${escapeHTML(order.productName)}">
+          <button class="btn-row-whatsapp" data-client="${escapeHTML(order.customerName)}" data-product="${escapeHTML(order.productName)}" data-status="${escapeHTML(order.status)}">
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.459h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
             </svg>
@@ -926,12 +943,50 @@ function initAdminDashboard() {
         });
       }
 
+      const saveAmountBtn = orderCard.querySelector(".btn-save-amount");
+      if (saveAmountBtn) {
+        saveAmountBtn.addEventListener("click", async (e) => {
+          const orderId = e.target.getAttribute("data-order-id");
+          const input = orderCard.querySelector(`.amount-paid-input[data-order-id="${orderId}"]`);
+          const amount = Number(input.value);
+          try {
+            await updateOrderAmountPaid(orderId, amount);
+            showToast("Amount paid updated!", "success");
+          } catch (err) {
+            showToast("Failed to update amount.", "error");
+          }
+        });
+      }
+
       const waButton = orderCard.querySelector(".btn-row-whatsapp");
       if (waButton) {
         waButton.addEventListener("click", () => {
           const clientName = waButton.getAttribute("data-client");
           const productName = waButton.getAttribute("data-product");
-          const chatMsg = `Hello ${clientName}, this is Gathoni Styles. Regarding your custom order for the *${productName}*, we would like to confirm some details...`;
+          const status = waButton.getAttribute("data-status");
+          
+          let chatMsg = `Hello ${clientName}, this is Gathoni Styles. `;
+          
+          switch(status) {
+            case 'consultation':
+              chatMsg += `Regarding your custom order for the *${productName}*, we would like to confirm some details and finalize your measurements before starting production.`;
+              break;
+            case 'deposit-paid':
+              chatMsg += `We have received your deposit for the *${productName}*. Production will begin shortly!`;
+              break;
+            case 'in-production':
+              chatMsg += `Just a quick update: your *${productName}* is currently in production. We are meticulously crafting your garment!`;
+              break;
+            case 'ready-delivery':
+              chatMsg += `Great news! Your *${productName}* is ready for delivery. Please let us know your preferred delivery details.`;
+              break;
+            case 'completed':
+              chatMsg += `We hope you love your *${productName}*! Thank you for shopping with Gathoni Styles. Please let us know if you need any further assistance.`;
+              break;
+            default:
+              chatMsg += `Regarding your custom order for the *${productName}*, we would like to confirm some details...`;
+          }
+
           const chatUrl = `https://wa.me/${TAILOR_WHATSAPP_PHONE}?text=${encodeURIComponent(chatMsg)}`;
           window.open(chatUrl, "_blank");
         });

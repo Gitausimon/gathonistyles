@@ -43,6 +43,18 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent; /* Remove default blue highlight on mobile */
+}
+
+/* Global mobile tap feedback */
+button:active, 
+a:active,
+.filter-pill:active,
+.admin-tab-btn:active,
+.timeline-node:active .node-icon {
+  transform: scale(0.95) !important;
+  opacity: 0.85;
+  transition: transform 0.05s ease, opacity 0.05s ease;
 }
 
 html, body {
@@ -358,6 +370,18 @@ body::before {
 .wait-time-banner.high-demand {
   background: var(--accent-gradient);
   color: #FFFFFF;
+}
+
+/* Make Wait Time Banner much smaller on mobile to preserve screen space */
+@media (max-width: 768px) {
+  .wait-time-banner {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 /* -------------------------------------------------------------
