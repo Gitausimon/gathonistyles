@@ -5,16 +5,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="Maison Nairobi - A premium digital lookbook and bespoke custom-tailoring storefront. Submit precise measurements for handmade dresses, official wear, and casual garments with direct WhatsApp consultations.">
+    content="Styles by Gathoni - Nairobi's premier custom tailor for women. Specializing in bespoke lady suits, Ankara dresses, graduation outfits, and celebration inspo fits. Submit precise measurements for handmade garments via WhatsApp.">
   <meta name="keywords"
-    content="custom tailoring, nairobi fashion, bespoke dresses, measuring guide, maison nairobi, whatsapp checkout, anti-shopify">
+    content="custom lady suits nairobi, ankara dresses kenya, graduation outfits, inspo celebrations, custom tailoring, bespoke dresses, ruracio outfits, tailored women suits, custom garments, styles by gathoni, style by gathoni, gathoni style, gathoni styles, styled by gathoni, gathonis style, styles by gatoni, gathony style, stylebygathoni, boutique fashion designer nairobi, custom fit clothing, westlands, kilimani, lavington, karen, kileleshwa, nairobi cbd, muthaiga, runda, eastleigh, south c, langata, ruaka, ngong road, kasarani, githurai, thika, nakuru, milimani nakuru, section 58 nakuru, mombasa, nyali, bamburi, diani, mtwapa">
   <title>Styles by Gathoni | Bespoke Lookbook & Tailoring</title>
 
+  <!-- Preconnections for Speed -->
+  <link rel="preconnect" href="https://firestore.googleapis.com">
+  <link rel="preconnect" href="https://res.cloudinary.com">
+
   <!-- SEO & Social Meta Tags -->
+  <link rel="canonical" href="https://stylesbygathoni.com/" />
+  <meta property="og:url" content="https://stylesbygathoni.com/">
   <meta property="og:title" content="Styles by Gathoni | Bespoke Custom Tailoring">
   <meta property="og:description"
-    content="Nairobi's premium digital lookbook. Enter measurements and order bespoke tailoring via WhatsApp.">
+    content="Nairobi's premier custom tailor. Order bespoke lady suits, Ankara dresses, graduation outfits, and celebration wear with precise custom fitting.">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://stylesbygathoni.com/assets/hero.jpg">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Styles by Gathoni | Bespoke Tailoring">
+  <meta name="twitter:description" content="Custom lady suits, Ankara dresses, and graduation outfits handcrafted in Nairobi.">
+  <meta name="twitter:image" content="https://stylesbygathoni.com/assets/hero.jpg">
+
+  <!-- JSON-LD LocalBusiness Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Styles by Gathoni",
+    "image": "https://stylesbygathoni.com/assets/hero.jpg",
+    "description": "Nairobi's premier custom tailor for women. Specializing in bespoke lady suits, Ankara dresses, graduation outfits, and celebration wear.",
+    "url": "https://stylesbygathoni.com/",
+    "telephone": "+254758519041",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Nairobi",
+      "addressCountry": "KE"
+    }
+  }
+  </script>
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="assets/style_by_gathoni.svg">
@@ -22,7 +52,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
-  <link rel="manifest" href="assets/favicon/site.webmanifest">
+  <link id="app-manifest" rel="manifest" href="assets/favicon/site.webmanifest">
 
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="index.css">
@@ -31,6 +61,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1RJ36XRQ33"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-1RJ36XRQ33');
+  </script>
 </head>
 
 <body>
@@ -79,7 +119,7 @@
             fashion customized to your
             exact silhouette. Hand-crafted local tailoring, finalized over a quick, friction-free WhatsApp chat.</p>
           <div class="hero-actions animate-hero">
-            <a href="#catalog" class="btn-primary-pill" id="btn-hero-explore">Explore Collection &rarr;</a>
+            <a href="#catalog" class="btn-primary-pill" id="btn-hero-explore">Explore Collection</a>
           </div>
         </div>
 
@@ -298,6 +338,7 @@
           style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
           <h2 class="admin-title">Shop Admin Dashboard</h2>
           <div style="display: flex; gap: 1rem; align-items: center;">
+            <button id="btn-install-pwa" class="btn-primary-pill" style="display: none; padding: 0.5rem 1rem; font-size: 0.85rem;">Install App</button>
             <span class="btn-outline glass-btn" style="border-style: dashed; pointer-events: none;"
               id="db-status-badge">Offline Mode</span>
             <button id="btn-admin-logout" class="btn-outline">Sign Out</button>

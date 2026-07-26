@@ -38,6 +38,61 @@ let activeFilters = "all";
 let _heroAnimated = false;
 
 // -------------------------------------------------------------
+// PROGRESSIVE WEB APP (PWA) INIT
+// -------------------------------------------------------------
+let deferredPrompt;
+function initPWA() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then((registration) => {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, (err) => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+    });
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent the mini-infobar from appearing on mobile
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    
+    // Update UI notify the user they can install the PWA
+    const installBtn = document.getElementById('btn-install-pwa');
+    if (installBtn) {
+      installBtn.style.display = 'block';
+      
+      installBtn.addEventListener('click', async () => {
+        // Hide the app provided install promotion
+        installBtn.style.display = 'none';
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to the install prompt: ${outcome}`);
+        // We've used the prompt, and can't use it again, throw it away
+        deferredPrompt = null;
+      });
+    }
+  });
+
+  window.addEventListener('appinstalled', () => {
+    if (typeof gtag === "function") {
+      gtag("event", "install", {
+        app_name: "Styles by Gathoni Shop Admin"
+      });
+    }
+    const installBtn = document.getElementById('btn-install-pwa');
+    if (installBtn) {
+      installBtn.style.display = 'none';
+    }
+    console.log('PWA was installed');
+  });
+}
+
+// -------------------------------------------------------------
 // APP INITIALIZATION
 // -------------------------------------------------------------
 function initApp() {
@@ -104,6 +159,9 @@ function initApp() {
 
   // Initialize action bindings for form interaction fields
   initHomepageEditorForm();
+  
+  // Register Service Worker and PWA behavior
+  initPWA();
 }
 
 if (document.readyState === "loading") {
@@ -275,11 +333,28 @@ function initRouter() {
       setActiveNavLink("link-home");
     }
 
+    // Swap manifest dynamically so only admins get the admin PWA install prompt
+    const manifestLink = document.getElementById("app-manifest");
+    if (manifestLink) {
+      if (hash === "#admin") {
+        manifestLink.href = "assets/favicon/admin.webmanifest";
+      } else {
+        manifestLink.href = "assets/favicon/site.webmanifest";
+      }
+    }
+
     window.scrollTo(0, 0);
 
     // Refresh scroll triggers as page layout height has changed
     if (window.ScrollTrigger) {
       setTimeout(() => ScrollTrigger.refresh(), 100);
+    }
+
+    if (typeof gtag === "function") {
+      gtag("event", "page_view", {
+        page_location: window.location.href,
+        page_path: window.location.pathname + hash
+      });
     }
   };
 
@@ -429,6 +504,13 @@ function initCatalogFilters() {
 
     activeFilters = targetButton.getAttribute("data-category");
     renderCatalogGrid();
+
+    if (typeof gtag === "function") {
+      gtag("event", "select_content", {
+        content_type: "filter",
+        item_id: activeFilters
+      });
+    }
   });
 }
 
@@ -536,6 +618,59 @@ function loadProductDetails(productId) {
   document.getElementById("pdp-product-price").textContent = `Ksh ${formatPrice(product.price)}`;
   document.getElementById("pdp-product-description").textContent = product.description;
 
+  // Dynamic SEO Updates
+  document.title = `${product.name} | Styles by Gathoni`;
+  let metaDesc = document.querySelector('meta[name="description"]');
+  if (!metaDesc) {
+    metaDesc = document.createElement("meta");
+    metaDesc.name = "description";
+    document.head.appendChild(metaDesc);
+  }
+  metaDesc.setAttribute("content", product.description || `Bespoke tailored ${product.name} at Styles by Gathoni.`);
+
+  // Inject Dynamic Product JSON-LD Schema
+  let productSchema = document.getElementById("product-ld-schema");
+  if (!productSchema) {
+    productSchema = document.createElement("script");
+    productSchema.id = "product-ld-schema";
+    productSchema.type = "application/ld+json";
+    document.head.appendChild(productSchema);
+  }
+  
+  const schemaData = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "image": [product.image],
+    "description": product.description || `Bespoke custom ${product.name}`,
+    "sku": product.id,
+    "offers": {
+      "@type": "Offer",
+      "url": `https://stylesbygathoni.com/#pdp?id=${product.id}`,
+      "priceCurrency": "KES",
+      "price": product.price,
+      "availability": "https://schema.org/InStock",
+      "seller": {
+        "@type": "Organization",
+        "name": "Styles by Gathoni"
+      }
+    }
+  };
+  productSchema.textContent = JSON.stringify(schemaData);
+
+  if (typeof gtag === "function") {
+    gtag("event", "view_item", {
+      currency: "KES",
+      value: product.price,
+      items: [{
+        item_id: product.id,
+        item_name: product.name,
+        item_category: product.category,
+        price: product.price
+      }]
+    });
+  }
+
   // Mount components
   document.getElementById("pdp-silhouette-container").innerHTML = renderSilhouette();
   document.getElementById("pdp-form-container").innerHTML = renderMeasurementForm(product.type);
@@ -604,6 +739,19 @@ function loadProductDetails(productId) {
       }
 
       const waWindow = window.open('', '_blank');
+      
+      if (typeof gtag === "function") {
+        gtag("event", "begin_checkout", {
+          currency: "KES",
+          value: product.price,
+          items: [{
+            item_id: product.id,
+            item_name: product.name,
+            item_category: product.category,
+            price: product.price
+          }]
+        });
+      }
 
       try {
         const orderData = {
@@ -873,6 +1021,21 @@ function initAdminDashboard() {
         `;
       }
 
+      const amtPaid = Number(order.amountPaid || 0);
+      const price = Number(order.price);
+      const balance = price - amtPaid;
+      
+      let balanceDisplay = `Ksh ${formatPrice(balance)}`;
+      let balanceColor = 'var(--text-primary)';
+      
+      if (balance === 0) {
+        balanceDisplay = 'Complete Payment';
+        balanceColor = '#4ade80'; // Green
+      } else if (balance < 0) {
+        balanceDisplay = `Overpaid (Ksh ${formatPrice(Math.abs(balance))})`;
+        balanceColor = '#fb923c'; // Accent Orange
+      }
+
       orderCard.innerHTML = `
         <div class="order-row-header">
           <div>
@@ -894,16 +1057,17 @@ function initAdminDashboard() {
 
         <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-            <label style="font-size: 0.72rem; font-weight: 800; color: var(--text-secondary); letter-spacing: 0.05em;">AMOUNT PAID (Ksh)</label>
-            <div style="display: flex; gap: 0.5rem;">
-              <input type="number" class="amount-paid-input measurement-input" data-order-id="${order.id}" value="${order.amountPaid || 0}" style="width: 120px; height: 36px; padding: 0.5rem;" />
-              <button class="btn-save-amount btn-outline" data-order-id="${order.id}" style="height: 36px; padding: 0 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); border-style: dashed;">Save</button>
+            <label style="font-size: 0.72rem; font-weight: 800; color: var(--text-secondary); letter-spacing: 0.05em;">LOG A PAYMENT (Ksh)</label>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <input type="number" min="0" placeholder="e.g. 500" class="amount-paid-input measurement-input" data-order-id="${order.id}" style="width: 120px; height: 36px; padding: 0.5rem;" />
+              <button class="btn-save-amount btn-outline" data-order-id="${order.id}" data-current-paid="${amtPaid}" style="height: 36px; padding: 0 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); border-style: dashed;">Add</button>
             </div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: -0.2rem;">Total paid so far: Ksh ${formatPrice(amtPaid)}</div>
           </div>
           <div style="text-align: right; padding-right: 0.5rem;">
             <label style="font-size: 0.72rem; font-weight: 800; color: var(--text-secondary); letter-spacing: 0.05em;">BALANCE</label>
-            <div style="font-size: 1.1rem; font-weight: 700; color: ${order.price - (order.amountPaid || 0) <= 0 ? '#4ade80' : 'var(--text-primary)'};">
-              Ksh ${formatPrice(Math.max(0, order.price - (order.amountPaid || 0)))}
+            <div style="font-size: 1.1rem; font-weight: 700; color: ${balanceColor};">
+              ${balanceDisplay}
             </div>
           </div>
         </div>
@@ -948,10 +1112,15 @@ function initAdminDashboard() {
         saveAmountBtn.addEventListener("click", async (e) => {
           const orderId = e.target.getAttribute("data-order-id");
           const input = orderCard.querySelector(`.amount-paid-input[data-order-id="${orderId}"]`);
-          const amount = Number(input.value);
+          const amountToAdd = Math.abs(Number(input.value));
+          if (amountToAdd === 0) return; // Ignore empty/zero saves
+          
+          const currentPaid = Number(saveAmountBtn.getAttribute("data-current-paid"));
+          const newTotalAmount = currentPaid + amountToAdd;
+          
           try {
-            await updateOrderAmountPaid(orderId, amount);
-            showToast("Amount paid updated!", "success");
+            await updateOrderAmountPaid(orderId, newTotalAmount);
+            showToast("Payment logged successfully!", "success");
           } catch (err) {
             showToast("Failed to update amount.", "error");
           }

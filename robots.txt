@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://stylesbygathoni.com/sitemap.xml

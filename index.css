@@ -359,6 +359,30 @@ body::before {
   border-color: var(--text-primary);
 }
 
+.btn-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--text-primary);
+  color: #FFFFFF;
+  padding: 1rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
+}
+
+.btn-dark:hover {
+  background-color: var(--text-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(15, 23, 42, 0.3);
+}
+
 /* Wait Time Banner */
 .wait-time-banner {
   width: 100%;
@@ -448,6 +472,7 @@ body::before {
   background: var(--accent-gradient);
   color: #FFFFFF;
   padding: 1rem 2.4rem;
+  text-decoration: none;
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -1012,6 +1037,30 @@ body::before {
   padding: 8rem 0 var(--spacing-section) 0;
 }
 
+.btn-back-to-catalog {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.6rem;
+  margin-bottom: 2.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.btn-back-to-catalog svg {
+  transition: transform 0.3s ease;
+}
+
+.btn-back-to-catalog:hover svg {
+  transform: translateX(-5px);
+}
+
 .pdp-grid {
   display: grid;
   grid-template-columns: 5.5fr 6.5fr;
@@ -1274,6 +1323,27 @@ body::before {
   border-color: var(--accent-color);
   background-color: #FFFFFF;
   box-shadow: 0 0 0 4px rgba(251, 146, 60, 0.1);
+}
+
+/* File Upload Button Native Styling */
+input[type="file"]::file-selector-button {
+  background-color: var(--text-primary);
+  color: #FFFFFF;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: 1rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: var(--text-secondary);
 }
 
 .unit-badge {
