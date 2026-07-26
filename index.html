@@ -8,13 +8,21 @@
     content="Maison Nairobi - A premium digital lookbook and bespoke custom-tailoring storefront. Submit precise measurements for handmade dresses, official wear, and casual garments with direct WhatsApp consultations.">
   <meta name="keywords"
     content="custom tailoring, nairobi fashion, bespoke dresses, measuring guide, maison nairobi, whatsapp checkout, anti-shopify">
-  <title>Gathoni Nairobi | Bespoke Lookbook & Tailoring</title>
+  <title>Styles by Gathoni | Bespoke Lookbook & Tailoring</title>
 
   <!-- SEO & Social Meta Tags -->
-  <meta property="og:title" content="Gathoni Nairobi | Bespoke Custom Tailoring">
+  <meta property="og:title" content="Styles by Gathoni | Bespoke Custom Tailoring">
   <meta property="og:description"
     content="Nairobi's premium digital lookbook. Enter measurements and order bespoke tailoring via WhatsApp.">
   <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/style_by_gathoni.svg">
+  <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="assets/favicon/site.webmanifest">
 
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="index.css">
@@ -36,7 +44,9 @@
   <div class="nav-container-floating">
     <header class="header-glass">
       <nav class="container nav-bar">
-        <a href="#home" class="logo" id="nav-logo">Gathoni<span> NAIROBI</span></a>
+        <a href="#home" class="logo" id="nav-logo" style="display: flex; align-items: center; gap: 0.5rem;"><img
+            src="assets/style_by_gathoni.svg" alt="Styles by Gathoni Logo" class="site-logo-img" />Styles
+          by Gathoni</a>
         <div class="nav-links" id="nav-links">
           <a href="#home" class="nav-link active" id="link-home">Lookbook</a>
           <a href="#catalog" class="nav-link" id="link-catalog">Collection</a>
@@ -63,9 +73,12 @@
     <section id="view-home" class="spa-view">
       <div class="container hero-section">
         <div class="hero-content-center">
-          <span class="hero-brand-logo animate-hero">G A T H O N I</span>
+          <span class="hero-brand-logo animate-hero"
+            style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-direction: column;"><img
+              src="assets/style_by_gathoni.svg" alt="Styles by Gathoni Logo" class="hero-logo-img" />STYLES BY GATHONI</span>
           <h1 class="hero-title animate-hero" id="live-hero-title">Tailored to<br>Fit Perfectly</h1>
-          <p class="hero-subtext animate-hero" id="live-hero-subtext">Skip the standard sizes. Experience editorial fashion customized to your
+          <p class="hero-subtext animate-hero" id="live-hero-subtext">Skip the standard sizes. Experience editorial
+            fashion customized to your
             exact silhouette. Hand-crafted local tailoring, finalized over a quick, friction-free WhatsApp chat.</p>
           <div class="hero-actions animate-hero">
             <a href="#catalog" class="btn-primary-pill" id="btn-hero-explore">Explore Collection &rarr;</a>
@@ -74,9 +87,9 @@
 
         <!-- Centered Floating Image Frame with Specular Highlight and Organic Border-Radius -->
         <div class="hero-image-center animate-hero-image">
-          <div class="hero-image-frame-masked">
-            <img src="https://res.cloudinary.com/vbe25dhd/image/upload/v1785011789/ltsfqbyfdldk3eimquuy.jpg"
-              alt="High-end editorial modern African fashion garment modeled in Nairobi" loading="eager" />
+          <div style="position: relative; transform: scale(0.95); animation: floatImage 8s ease-in-out infinite alternate;">
+            <img src="assets/hero_img.png"
+              alt="High-end editorial modern African fashion garment modeled in Nairobi" loading="eager" style="width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));" />
           </div>
         </div>
 
@@ -262,7 +275,8 @@
       <div class="container" style="min-height: 80vh; display: flex; align-items: center; justify-content: center;">
         <div class="login-card glass">
           <h2 class="section-title" style="margin-bottom: 1rem;">Shop Admin Login</h2>
-          <p style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary);">Sign in to manage your shop and orders.</p>
+          <p style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary);">Sign in to manage your shop
+            and orders.</p>
           <form id="admin-login-form" class="login-form">
             <div class="form-group">
               <label for="login-email">Email Address</label>
@@ -292,11 +306,14 @@
         </header>
 
         <!-- Admin View Tabs Navigation Control -->
-        <div class="admin-tabs-nav glass" style="margin-bottom: 2.5rem; display: flex; gap: 0.5rem; padding: 0.6rem; border-radius: var(--radius-md);">
-          <button class="admin-tab-btn active" id="tab-btn-consultations" style="flex: 1; padding: 0.8rem; border-radius: var(--radius-sm); font-weight: 700; border: none; cursor: pointer; transition: all 0.3s ease;">
+        <div class="admin-tabs-nav glass"
+          style="margin-bottom: 2.5rem; display: flex; gap: 0.5rem; padding: 0.6rem; border-radius: var(--radius-md);">
+          <button class="admin-tab-btn active" id="tab-btn-consultations"
+            style="flex: 1; padding: 0.8rem; border-radius: var(--radius-sm); font-weight: 700; border: none; cursor: pointer; transition: all 0.3s ease;">
             Customer Orders
           </button>
-          <button class="admin-tab-btn" id="tab-btn-catalog" style="flex: 1; padding: 0.8rem; border-radius: var(--radius-sm); font-weight: 700; border: none; cursor: pointer; transition: all 0.3s ease;">
+          <button class="admin-tab-btn" id="tab-btn-catalog"
+            style="flex: 1; padding: 0.8rem; border-radius: var(--radius-sm); font-weight: 700; border: none; cursor: pointer; transition: all 0.3s ease;">
             Add & Manage Clothes
           </button>
         </div>
@@ -310,7 +327,8 @@
                 <h3 class="admin-card-title">Shop Wait Time</h3>
                 <form id="form-queue-editor" class="queue-editor-form">
                   <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-                    How many days does it take to finish a new outfit? This updates the public wait time banner on your website.
+                    How many days does it take to finish a new outfit? This updates the public wait time banner on your
+                    website.
                   </p>
                   <div class="queue-input-group">
                     <label for="queue-days">Production Wait:</label>
@@ -331,18 +349,26 @@
                   <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
                     Change the big wording on your homepage here.
                   </p>
-                  
-                  <div class="form-group-admin" style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem;">
-                    <label for="edit-hero-title" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Main Website Title Text (use \n for line breaks)</label>
+
+                  <div class="form-group-admin"
+                    style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem;">
+                    <label for="edit-hero-title"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Main Website Title Text
+                      (use \n for line breaks)</label>
                     <input type="text" id="edit-hero-title" class="measurement-input" required />
                   </div>
 
-                  <div class="form-group-admin" style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem;">
-                    <label for="edit-hero-subtext" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Small Description Text</label>
-                    <textarea id="edit-hero-subtext" class="measurement-input" style="height: 80px; padding: 0.8rem; resize: none;" required></textarea>
+                  <div class="form-group-admin"
+                    style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem;">
+                    <label for="edit-hero-subtext"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Small Description
+                      Text</label>
+                    <textarea id="edit-hero-subtext" class="measurement-input"
+                      style="height: 80px; padding: 0.8rem; resize: none;" required></textarea>
                   </div>
 
-                  <button type="submit" class="btn-primary-pill" style="padding: 0.8rem; font-size: 0.85rem; width: 100%;">
+                  <button type="submit" class="btn-primary-pill"
+                    style="padding: 0.8rem; font-size: 0.85rem; width: 100%;">
                     Save Website Text
                   </button>
                 </form>
@@ -407,24 +433,30 @@
                   <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
                     Fill this simple form to add a new outfit to your website.
                   </p>
-                  
+
                   <div class="form-group-admin" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label for="new-product-name" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Name of the Outfit</label>
-                    <input type="text" id="new-product-name" placeholder="e.g. Signature Column Gown" class="measurement-input" required />
+                    <label for="new-product-name"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Name of the
+                      Outfit</label>
+                    <input type="text" id="new-product-name" placeholder="e.g. Signature Column Gown"
+                      class="measurement-input" required />
                   </div>
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-                      <label for="new-product-category" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Category</label>
-                      <select id="new-product-category" class="status-selector" style="width: 100%; height: 42px;" required>
+                      <label for="new-product-category"
+                        style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Category</label>
+                      <select id="new-product-category" class="status-selector" style="width: 100%; height: 42px;"
+                        required>
                         <option value="dresses">Dresses</option>
                         <option value="official">Official</option>
                         <option value="casual">Casual</option>
                       </select>
                     </div>
-                    
+
                     <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-                      <label for="new-product-type" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Type</label>
+                      <label for="new-product-type"
+                        style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Type</label>
                       <select id="new-product-type" class="status-selector" style="width: 100%; height: 42px;" required>
                         <option value="dress">Dress</option>
                         <option value="skirt">Skirt</option>
@@ -435,30 +467,43 @@
                   </div>
 
                   <div class="form-group-admin" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label for="new-product-price" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Price (Ksh)</label>
-                    <input type="number" id="new-product-price" placeholder="e.g. 7200" class="measurement-input" required />
+                    <label for="new-product-price"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Price (Ksh)</label>
+                    <input type="number" id="new-product-price" placeholder="e.g. 7200" class="measurement-input"
+                      required />
                   </div>
 
                   <div class="form-group-admin" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label for="new-product-description" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Description of the Outfit</label>
-                    <textarea id="new-product-description" placeholder="Made with premium Nairobi breathable canvas-linen..." class="measurement-input" style="height: 100px; padding: 0.8rem; resize: none;" required></textarea>
+                    <label for="new-product-description"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Description of the
+                      Outfit</label>
+                    <textarea id="new-product-description"
+                      placeholder="Made with premium Nairobi breathable canvas-linen..." class="measurement-input"
+                      style="height: 100px; padding: 0.8rem; resize: none;" required></textarea>
                   </div>
 
-                    <div class="form-group-admin" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                      <label for="photoUpload" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Photo Upload</label>
-                      <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: -0.2rem; margin-bottom: 0.5rem;">Choose a photo from your device to upload.</p>
-                      
-                      <div id="wrapper-file-input">
-                        <input type="file" id="photoUpload" accept="image/*" class="measurement-input" required />
-                      </div>
-                      
-                      <img id="upload-preview" style="max-width: 100%; border-radius: 8px; margin-top: 10px; display: none; object-fit: cover; max-height: 250px;" alt="Upload Preview" />
+                  <div class="form-group-admin" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="photoUpload"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Photo Upload</label>
+                    <p
+                      style="font-size: 0.75rem; color: var(--text-secondary); margin-top: -0.2rem; margin-bottom: 0.5rem;">
+                      Choose a photo from your device to upload.</p>
 
-                      <input type="hidden" id="new-product-url" />
-                      <span id="upload-status" style="font-size: 0.8rem; font-weight: bold; color: var(--text-secondary);"></span>
+                    <div id="wrapper-file-input">
+                      <input type="file" id="photoUpload" accept="image/*" class="measurement-input" required />
                     </div>
 
-                  <button type="submit" class="btn-primary-pill" style="padding: 0.8rem; font-size: 0.85rem; width: 100%;">
+                    <img id="upload-preview"
+                      style="max-width: 100%; border-radius: 8px; margin-top: 10px; display: none; object-fit: cover; max-height: 250px;"
+                      alt="Upload Preview" />
+
+                    <input type="hidden" id="new-product-url" />
+                    <span id="upload-status"
+                      style="font-size: 0.8rem; font-weight: bold; color: var(--text-secondary);"></span>
+                  </div>
+
+                  <button type="submit" class="btn-primary-pill"
+                    style="padding: 0.8rem; font-size: 0.85rem; width: 100%;">
                     Add Item to Website
                   </button>
                 </form>
@@ -486,7 +531,9 @@
   <footer class="footer-glass">
     <div class="container footer-grid">
       <div class="footer-left">
-        <span class="footer-logo">Gathoni<span> NAIROBI</span></span>
+        <span class="footer-logo" style="display: flex; align-items: center; gap: 0.5rem;"><img
+            src="assets/style_by_gathoni.svg" alt="Styles by Gathoni Logo" class="site-logo-img" />Styles
+          by Gathoni</span>
         <p class="footer-quote">"True luxury is in the fit. Each line, stitch, and fold is crafted uniquely to honor
           your silhouette."</p>
       </div>
@@ -499,7 +546,8 @@
         <div class="footer-links-col">
           <h4>Contact</h4>
           <p>Nairobi, Kenya</p>
-          <p>inquire@gathonininairobi.com</p>
+          <p>inquire@stylesbygathoni.com</p>
+          <a href="https://www.tiktok.com/@style_by_gathoni" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-top: 0.8rem; font-weight: 700; color: var(--text-primary); transition: color 0.3s ease;" onmouseover="this.style.color='var(--accent-color)'" onmouseout="this.style.color='var(--text-primary)'">TikTok: @style_by_gathoni</a>
         </div>
         <div class="footer-newsletter">
           <h4>Newsletter</h4>
@@ -512,7 +560,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2026 GathoniNairobi. Handcrafted for Nairobi. Crafted for You.</p>
+      <p>&copy; 2026 Styles by Gathoni. Handcrafted for Nairobi. Crafted for You.</p>
     </div>
   </footer>
 

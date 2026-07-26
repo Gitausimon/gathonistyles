@@ -225,6 +225,16 @@ body::before {
   color: var(--text-secondary);
 }
 
+.site-logo-img {
+  height: 60px;
+  width: auto;
+}
+
+.hero-logo-img {
+  height: 120px;
+  width: auto;
+}
+
 .nav-links {
   display: flex;
   gap: 2.5rem;
@@ -2054,6 +2064,21 @@ body::before {
   .hero-section {
     padding: 8rem 0 4rem 0;
   }
+
+  .site-logo-img {
+    height: 44px;
+  }
+
+  .hero-logo-img {
+    height: 80px;
+  }
+
+  .hero-brand-logo {
+    white-space: normal;
+    letter-spacing: 0.15em;
+    font-size: 0.75rem;
+  }
+
   .hero-title {
     font-size: 2.8rem;
   }
