@@ -310,14 +310,22 @@ function initJourneyTimeline() {
 // -------------------------------------------------------------
 function initRouter() {
   const handleRouting = () => {
-    // iOS PWA Start URL fix: Catch ?admin=true query parameter from admin webmanifest
-    const searchParams = new URLSearchParams(window.location.search);
-    if (searchParams.get('admin') === 'true' && window.location.hash !== '#admin') {
-      window.location.hash = '#admin';
-      return; // Let the hashchange event handle the actual routing
+    let hash = window.location.hash;
+
+    // iOS PWA Start URL fix: If on admin.html, ensure hash is #admin
+    if (window.location.pathname.includes("admin.html") && !hash) {
+      window.location.hash = "#admin";
+      return;
     }
 
-    const hash = window.location.hash || "#home";
+    // If user requests #admin on the public index.html, hard redirect to admin.html
+    // This allows iOS Safari to parse the dedicated admin.webmanifest natively on HTML load
+    if (hash === "#admin" && !window.location.pathname.includes("admin.html")) {
+      window.location.href = "/admin.html#admin";
+      return;
+    }
+
+    hash = hash || "#home";
 
     // Hide all views first
     document.querySelectorAll(".spa-view").forEach(view => {
@@ -356,13 +364,6 @@ function initRouter() {
     } else {
       showView("view-home");
       setActiveNavLink("link-home");
-    }
-
-    // Force address bar to include ?admin=true so iOS Safari Add to Homescreen captures it
-    if (hash === "#admin" && !window.location.search.includes("admin=true")) {
-      window.history.replaceState(null, "", "?admin=true#admin");
-    } else if (hash !== "#admin" && window.location.search.includes("admin=true")) {
-      window.history.replaceState(null, "", window.location.pathname + hash);
     }
 
     // Swap manifest dynamically so only admins get the admin PWA install prompt

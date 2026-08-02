@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Styles by Gathoni - Nairobi's premier custom tailor for women. Specializing in bespoke lady suits, Ankara dresses, graduation outfits, and celebration inspo fits. Submit precise measurements for handmade garments via WhatsApp.">
+  <meta name="keywords"
+    content="custom lady suits nairobi, ankara dresses kenya, graduation outfits, inspo celebrations, custom tailoring, bespoke dresses, ruracio outfits, tailored women suits, custom garments, styles by gathoni, style by gathoni, gathoni style, gathoni styles, styled by gathoni, gathonis style, styles by gatoni, gathony style, stylebygathoni, boutique fashion designer nairobi, custom fit clothing, westlands, kilimani, lavington, karen, kileleshwa, nairobi cbd, muthaiga, runda, eastleigh, south c, langata, ruaka, ngong road, kasarani, githurai, thika, nakuru, milimani nakuru, section 58 nakuru, mombasa, nyali, bamburi, diani, mtwapa">
+  <title>Styles by Gathoni | Bespoke Lookbook & Tailoring</title>
+
+  <!-- Preconnections for Speed -->
+  <link rel="preconnect" href="https://firestore.googleapis.com">
+  <link rel="preconnect" href="https://res.cloudinary.com">
+
+  <!-- SEO & Social Meta Tags -->
+  <link rel="canonical" href="https://stylesbygathoni.com/" />
+  <meta property="og:url" content="https://stylesbygathoni.com/">
+  <meta property="og:title" content="Styles by Gathoni | Bespoke Custom Tailoring">
+  <meta property="og:description"
+    content="Nairobi's premier custom tailor. Order bespoke lady suits, Ankara dresses, graduation outfits, and celebration wear with precise custom fitting.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://stylesbygathoni.com/assets/hero.jpg">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Styles by Gathoni | Bespoke Tailoring">
+  <meta name="twitter:description" content="Custom lady suits, Ankara dresses, and graduation outfits handcrafted in Nairobi.">
+  <meta name="twitter:image" content="https://stylesbygathoni.com/assets/hero.jpg">
+
+  <!-- JSON-LD LocalBusiness Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Styles by Gathoni",
+    "image": "https://stylesbygathoni.com/assets/hero.jpg",
+    "description": "Nairobi's premier custom tailor for women. Specializing in bespoke lady suits, Ankara dresses, graduation outfits, and celebration wear.",
+    "url": "https://stylesbygathoni.com/",
+    "telephone": "+254758519041",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Nairobi",
+      "addressCountry": "KE"
+    }
+  }
+  </script>
+
+  <!-- Favicon & PWA Capabilities -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Gathoni Admin">
+  <link rel="icon" type="image/svg+xml" href="assets/style_by_gathoni.svg">
+  <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+  <link id="app-manifest" rel="manifest" href="assets/favicon/admin.webmanifest">
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="index.css">
+
+  <!-- Animations & Scroll Dynamics CDNs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <!-- Color Math & UI Picker -->
+  <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1RJ36XRQ33"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-1RJ36XRQ33');
+  </script>
+</head>
+
+<body>
+
+  <!-- Floating Glow Blobs (Visual Depth Background) -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- Floating Capsule Navigation Header -->
+  <div class="nav-container-floating">
+    <header class="header-glass">
+      <nav class="container nav-bar">
+        <a href="#home" class="logo" id="nav-logo" style="display: flex; align-items: center; gap: 0.5rem;"><img
+            src="assets/style_by_gathoni.svg" alt="Styles by Gathoni Logo" class="site-logo-img" />Styles
+          by Gathoni</a>
+        <div class="nav-links" id="nav-links">
+          <a href="#home" class="nav-link active" id="link-home">Lookbook</a>
+          <a href="#catalog" class="nav-link" id="link-catalog">Collection</a>
+        </div>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle mobile menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </nav>
+      <!-- Wait Time Banner synced with Firestore/LocalStorage -->
+      <div id="wait-time-banner" class="wait-time-banner low-demand">
+        Syncing boutique schedule...
+      </div>
+    </header>
+  </div>
+
+  <!-- SPA Core Main Container -->
+  <main id="app-viewport">
+
+    <!-- VIEW 1: HOME / LOOKBOOK -->
+    <section id="view-home" class="spa-view">
+      <div class="container hero-section">
+        <div class="hero-content-center">
+          <span class="hero-brand-logo animate-hero">STYLES BY GATHONI</span>
+          <h1 class="hero-title animate-hero" id="live-hero-title">Tailored to<br>Fit Perfectly</h1>
+          <p class="hero-subtext animate-hero" id="live-hero-subtext">Skip the standard sizes. Experience editorial
+            fashion customized to your
+            exact silhouette. Hand-crafted local tailoring, finalized over a quick, friction-free WhatsApp chat.</p>
+          <div class="hero-actions animate-hero">
+            <a href="#catalog" class="btn-primary-pill" id="btn-hero-explore">Explore Collection</a>
+          </div>
+        </div>
+
+        <!-- Centered Floating Image Frame with Specular Highlight and Organic Border-Radius -->
+        <div class="hero-image-center animate-hero-image">
+          <div class="hero-image-frame-masked glass">
+            <div class="glass-specular-reflection"></div>
+            <img src="assets/hero.jpg"
+              alt="High-end editorial modern African fashion garment modeled in Nairobi" loading="eager" />
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Journey Timeline Section -->
+      <section class="journey-section" id="journey-timeline">
+        <div class="container">
+          <h2 class="section-title">The Bespoke Experience</h2>
+          <p class="journey-subtitle">From inspiration to doorstep — four seamless steps, all on WhatsApp.</p>
+
+          <div class="journey-timeline">
+            <!-- The animated connecting line -->
+            <div class="timeline-track">
+              <div class="timeline-track-fill" id="timeline-track-fill"></div>
+            </div>
+
+            <!-- Step 1: Choose -->
+            <div class="timeline-node" data-step="1">
+              <div class="node-dot"><span class="dot-ping"></span></div>
+              <div class="node-content">
+                <div class="node-icon">
+                  <!-- Fabric Rolls SVG -->
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4z" />
+                    <path d="M14 4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V4z" />
+                    <path d="M4 14c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4z" />
+                    <path d="M14 14c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-4z" />
+                    <path d="M7 2v2M17 2v2M7 12v-2M17 12v-2" />
+                  </svg>
+                </div>
+                <span class="node-label">Choose</span>
+                <h3 class="node-title">Browse the Lookbook</h3>
+                <p class="node-desc">Explore our curated collection of exclusive dresses, skirts, and tailored official
+                  wear.</p>
+              </div>
+            </div>
+
+            <!-- Step 2: Measure -->
+            <div class="timeline-node" data-step="2">
+              <div class="node-dot"><span class="dot-ping"></span></div>
+              <div class="node-content">
+                <div class="node-icon">
+                  <!-- Measuring Tape SVG -->
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z" />
+                    <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
+                    <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </div>
+                <span class="node-label">Measure</span>
+                <h3 class="node-title">Input Your Fit</h3>
+                <p class="node-desc">Follow our guided measurement tool. Every centimetre captured — zero guesswork.</p>
+              </div>
+            </div>
+
+            <!-- Step 3: Tailoring -->
+            <div class="timeline-node" data-step="3">
+              <div class="node-dot"><span class="dot-ping"></span></div>
+              <div class="node-content">
+                <div class="node-icon">
+                  <!-- Sewing Machine / Scissors SVG -->
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="6" cy="6" r="3" />
+                    <circle cx="6" cy="18" r="3" />
+                    <line x1="20" y1="4" x2="8.12" y2="15.88" />
+                    <line x1="14.47" y1="14.48" x2="20" y2="20" />
+                    <line x1="8.12" y1="8.12" x2="12" y2="12" />
+                  </svg>
+                </div>
+                <span class="node-label">Tailoring</span>
+                <h3 class="node-title">Hand-Crafted for You</h3>
+                <p class="node-desc">Your garment is cut, stitched, and finished by hand in our Nairobi atelier.</p>
+              </div>
+            </div>
+
+            <!-- Step 4: Delivery -->
+            <div class="timeline-node" data-step="4">
+              <div class="node-dot"><span class="dot-ping"></span></div>
+              <div class="node-content">
+                <div class="node-icon">
+                  <!-- Mannequin / Delivery SVG -->
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v1a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+                    <path d="M6.5 9C4 9.5 3 11 3 13v2h18v-2c0-2-1-3.5-3.5-4" />
+                    <line x1="12" y1="15" x2="12" y2="22" />
+                    <line x1="8" y1="22" x2="16" y2="22" />
+                  </svg>
+                </div>
+                <span class="node-label">Delivery</span>
+                <h3 class="node-title">Styled &amp; Delivered</h3>
+                <p class="node-desc">Your finished piece arrives at your door. Pay M-PESA only after consultation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- VIEW 2: PRODUCT CATALOG -->
+    <section id="view-catalog" class="spa-view" style="display: none;">
+      <div class="container catalog-section">
+        <h2 class="section-title">The Lookbook Collection</h2>
+
+        <!-- Category Filter Pill Bar -->
+        <nav class="filter-bar" aria-label="Catalog filters">
+          <div class="filter-pills glass" id="catalog-filter-bar">
+            <button class="filter-pill active" data-category="all">
+              <span class="pill-dot"></span> All Items
+            </button>
+            <button class="filter-pill" data-category="dresses">
+              <span class="pill-dot"></span> Dresses
+            </button>
+            <button class="filter-pill" data-category="official">
+              <span class="pill-dot"></span> Official
+            </button>
+            <button class="filter-pill" data-category="casual">
+              <span class="pill-dot"></span> Casual
+            </button>
+          </div>
+        </nav>
+
+        <!-- Catalog Products Grid -->
+        <div class="product-grid" id="catalog-grid">
+          <!-- Dynamically Injected Products -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: PRODUCT DETAIL PAGE (PDP) -->
+    <section id="view-pdp" class="spa-view" style="display: none;">
+      <div class="container pdp-section">
+
+        <button class="btn-back-to-catalog glass-btn" id="btn-back-to-catalog">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Catalog
+        </button>
+
+        <div class="pdp-grid">
+          <!-- Sticky Left Image Column inside a Glass Card Frame -->
+          <div class="pdp-sticky-left">
+            <div class="pdp-image-frame glass-pdp-frame">
+              <img id="pdp-product-image" src="" alt="Selected garment closeup photo" />
+
+            </div>
+          </div>
+
+          <!-- Scrolling Right Form Column -->
+          <div class="pdp-scroll-right">
+            <div class="pdp-header glass">
+              <span class="pdp-category" id="pdp-product-category">Garment Type</span>
+              <h2 class="pdp-title" id="pdp-product-title">Garment Name</h2>
+              <div class="pdp-price" id="pdp-product-price">Ksh 0.00</div>
+            </div>
+
+            <p class="pdp-description glass" id="pdp-product-description">Garment description here...</p>
+
+            <!-- Interactive Measuring Blueprint Block (Glass card container) -->
+            <div class="measurement-guide-box glass">
+              <div id="pdp-silhouette-container">
+                <!-- Silhouette SVG injected here -->
+              </div>
+              <div id="pdp-form-container">
+                <!-- MeasurementForm component injected here -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: ADMIN LOGIN GATEWAY -->
+    <section id="view-login" class="spa-view" style="display: none;">
+      <div class="container" style="min-height: 80vh; display: flex; align-items: center; justify-content: center;">
+        <div class="login-card glass">
+          <h2 class="section-title" style="margin-bottom: 1rem;">Shop Admin Login</h2>
+          <p style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary);">Sign in to manage your shop
+            and orders.</p>
+          <form id="admin-login-form" class="login-form">
+            <div class="form-group">
+              <label for="login-email">Email Address</label>
+              <input type="email" id="login-email" class="measurement-input" required />
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" class="measurement-input" required />
+            </div>
+            <button type="submit" class="btn-dark" style="width: 100%; margin-top: 1rem;">Login</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: ADMIN DASHBOARD (Tailor Ops) -->
+    <section id="view-admin" class="spa-view" style="display: none;">
+      <div class="container admin-section">
+        <header class="admin-header glass"
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+          <h2 class="admin-title">Shop Admin Dashboard</h2>
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <button id="btn-install-pwa" class="btn-primary-pill" style="display: none; padding: 0.5rem 1rem; font-size: 0.85rem;">Install App</button>
+            <span class="btn-outline glass-btn" style="border-style: dashed; pointer-events: none;"
+              id="db-status-badge">Offline Mode</span>
+            <button id="btn-admin-logout" class="btn-outline">Sign Out</button>
+          </div>
+        </header>
+
+        <!-- Admin View Tabs Navigation Control -->
+        <div class="admin-tabs-nav glass"
+          style="margin-bottom: 2.5rem; display: flex; gap: 0.5rem; padding: 0.6rem; border-radius: var(--radius-md);">
+          <button class="admin-tab-btn active" id="tab-btn-consultations"
+            style="flex: 1; padding: 0.8rem; border-radius: var(--radius-sm); font-weight: 700; border: none; cursor: pointer; transition: all 0.3s ease;">
+            Customer Orders
+          </button>
+          <button class="admin-tab-btn" id="tab-btn-catalog"
+            style="flex: 1; padding: 0.8rem; border-radius: var(--radius-sm); font-weight: 700; border: none; cursor: pointer; transition: all 0.3s ease;">
+            Add & Manage Clothes
+          </button>
+        </div>
+
+        <!-- PANE 1: ACTIVE CONSULTATIONS QUEUE -->
+        <div id="admin-pane-consultations" class="admin-pane active-pane">
+          <div class="admin-grid">
+            <!-- Column 1: Store Settings -->
+            <aside class="admin-sidebar">
+              <div class="admin-card glass">
+                <h3 class="admin-card-title">Shop Wait Time</h3>
+                <form id="form-queue-editor" class="queue-editor-form">
+                  <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                    How many days does it take to finish a new outfit? This updates the public wait time banner on your
+                    website.
+                  </p>
+                  <div class="queue-input-group">
+                    <label for="queue-days">Production Wait:</label>
+                    <input type="number" id="queue-days" name="days" min="1" max="14" class="queue-number-input"
+                      required />
+                    <span>Days</span>
+                  </div>
+                  <button type="submit" class="btn-primary-pill"
+                    style="padding: 0.8rem; font-size: 0.85rem; width: 100%;">
+                    Save Wait Time
+                  </button>
+                </form>
+              </div>
+
+              <div class="admin-card glass">
+                <h3 class="admin-card-title">Change Website Text</h3>
+                <form id="form-homepage-editor" class="queue-editor-form">
+                  <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                    Change the big wording on your homepage here.
+                  </p>
+
+                  <div class="form-group-admin"
+                    style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem;">
+                    <label for="edit-hero-title"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Main Website Title Text
+                      (use \n for line breaks)</label>
+                    <input type="text" id="edit-hero-title" class="measurement-input" required />
+                  </div>
+
+                  <div class="form-group-admin"
+                    style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem;">
+                    <label for="edit-hero-subtext"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Small Description
+                      Text</label>
+                    <textarea id="edit-hero-subtext" class="measurement-input"
+                      style="height: 80px; padding: 0.8rem; resize: none;" required></textarea>
+                  </div>
+
+                  <button type="submit" class="btn-primary-pill"
+                    style="padding: 0.8rem; font-size: 0.85rem; width: 100%;">
+                    Save Website Text
+                  </button>
+                </form>
+              </div>
+
+              <!-- Floating Analytics counters (Apple/Linear Style) -->
+              <div class="admin-card glass analytics-card">
+                <h3 class="admin-card-title">Orders Overview</h3>
+                <div class="analytics-radial-box">
+                  <!-- Circular progress ring -->
+                  <svg class="radial-ring" viewBox="0 0 36 36">
+                    <path class="ring-bg"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="ring-fill" id="analytics-progress-ring" stroke-dasharray="40, 100"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  </svg>
+                  <div class="radial-text">
+                    <span class="radial-number" id="analytics-active-count">0</span>
+                    <span class="radial-label">Active</span>
+                  </div>
+                </div>
+                <div class="analytics-list">
+                  <div class="analytics-item">
+                    <span class="dot-indicator blue"></span>
+                    <span class="label">Consultations:</span>
+                    <span class="value" id="count-consultations">0</span>
+                  </div>
+                  <div class="analytics-item">
+                    <span class="dot-indicator orange"></span>
+                    <span class="label">In Production:</span>
+                    <span class="value" id="count-production">0</span>
+                  </div>
+                  <div class="analytics-item">
+                    <span class="dot-indicator green"></span>
+                    <span class="label">Completed:</span>
+                    <span class="value" id="count-completed">0</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <!-- Column 2: Live Orders / Consultation Tracker -->
+            <main class="orders-list-box">
+              <div class="admin-card glass" style="margin-bottom: 0;">
+                <h3 class="admin-card-title">Customer Orders Waiting</h3>
+                <div id="admin-orders-list">
+                  <!-- Dynamically Injected Orders -->
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+
+        <!-- PANE 2: LOOKBOOK COLLECTION MANAGEMENT -->
+        <div id="admin-pane-catalog" class="admin-pane" style="display: none;">
+          <div class="admin-grid">
+            <!-- Left Column: Add Product Form -->
+            <aside class="admin-sidebar">
+              <div class="admin-card glass">
+                <h3 class="admin-card-title">Add a New Item of Clothing</h3>
+                <form id="form-add-product" class="queue-editor-form">
+                  <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                    Fill this simple form to add a new outfit to your website.
+                  </p>
+
+                  <div class="form-group-admin" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="new-product-name"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Name of the
+                      Outfit</label>
+                    <input type="text" id="new-product-name" placeholder="e.g. Signature Column Gown"
+                      class="measurement-input" required />
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="new-product-category"
+                        style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Category</label>
+                      <select id="new-product-category" class="status-selector" style="width: 100%; height: 42px;"
+                        required>
+                        <option value="dresses">Dresses</option>
+                        <option value="official">Official</option>
+                        <option value="casual">Casual</option>
+                      </select>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="new-product-type"
+                        style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Type</label>
+                      <select id="new-product-type" class="status-selector" style="width: 100%; height: 42px;" required>
+                        <option value="dress">Dress</option>
+                        <option value="skirt">Skirt</option>
+                        <option value="official">Official Suit</option>
+                        <option value="casual">Casual Top</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group-admin" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="new-product-price"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Price (Ksh)</label>
+                    <input type="number" id="new-product-price" placeholder="e.g. 7200" class="measurement-input"
+                      required />
+                  </div>
+
+                  <div class="form-group-admin" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="new-product-description"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Description of the
+                      Outfit</label>
+                    <textarea id="new-product-description"
+                      placeholder="Made with premium Nairobi breathable canvas-linen..." class="measurement-input"
+                      style="height: 100px; padding: 0.8rem; resize: none;" required></textarea>
+                  </div>
+
+                  <div class="form-group-admin" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label for="photoUpload"
+                      style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Photo Upload</label>
+                    <p
+                      style="font-size: 0.75rem; color: var(--text-secondary); margin-top: -0.2rem; margin-bottom: 0.5rem;">
+                      Choose a photo from your device to upload.</p>
+
+                    <div id="wrapper-file-input">
+                      <input type="file" id="photoUpload" accept="image/*" class="measurement-input" required />
+                    </div>
+
+                    <img id="upload-preview"
+                      style="max-width: 100%; border-radius: 8px; margin-top: 10px; display: none; object-fit: cover; max-height: 250px;"
+                      alt="Upload Preview" />
+
+                    <input type="hidden" id="new-product-url" />
+                    <span id="upload-status"
+                      style="font-size: 0.8rem; font-weight: bold; color: var(--text-secondary);"></span>
+                  </div>
+
+                  <button type="submit" class="btn-primary-pill"
+                    style="padding: 0.8rem; font-size: 0.85rem; width: 100%;">
+                    Add Item to Website
+                  </button>
+                </form>
+              </div>
+
+              <div class="admin-card glass" style="margin-top: 1rem;">
+                <h3 class="admin-card-title">Manage Available Colors</h3>
+                <form id="form-add-color" class="queue-editor-form">
+                  <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                    Add colors that customers can choose from when ordering.
+                  </p>
+                  
+                  <div class="form-group-admin" style="display: flex; gap: 0.5rem; align-items: flex-end; margin-bottom: 1rem;">
+                    <div style="flex: 2; display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="new-color-name" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Color Name</label>
+                      <input type="text" id="new-color-name" placeholder="e.g. Crimson Red" class="measurement-input" required />
+                    </div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="new-color-hex" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Hex Code</label>
+                      <input type="text" id="new-color-hex" value="#FF0000" class="measurement-input" pattern="^#[0-9A-Fa-f]{6}$" title="Hex code (e.g., #FF0000)" style="padding-left: 0.5rem; padding-right: 0.5rem;" required />
+                    </div>
+                    <button type="button" id="btn-open-advanced-color" class="btn-outline" style="height: 42px; padding: 0 1rem;">
+                       &#x1F3A8; Open Color Workspace
+                    </button>
+                    <button type="submit" class="btn-primary-pill" style="padding: 0 1rem; height: 42px; font-size: 0.85rem;">
+                      Add
+                    </button>
+                  </div>
+                </form>
+                
+                <!-- List of existing colors -->
+                <div id="admin-colors-list" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+                  <!-- Dynamically Injected Colors -->
+                </div>
+              </div>
+            </aside>
+
+            <!-- Right Column: Inventory List -->
+            <main class="orders-list-box">
+              <div class="admin-card glass" style="margin-bottom: 0;">
+                <h3 class="admin-card-title">Items Currently on your Website</h3>
+                <div id="admin-inventory-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                  <!-- Dynamically Injected Admin Catalog items -->
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="footer-glass">
+    <div class="container footer-grid">
+      <div class="footer-left">
+        <span class="footer-logo" style="display: flex; align-items: center; gap: 0.5rem;"><img
+            src="assets/style_by_gathoni.svg" alt="Styles by Gathoni Logo" class="site-logo-img" />Styles
+          by Gathoni</span>
+        <p class="footer-quote">"True luxury is in the fit. Each line, stitch, and fold is crafted uniquely to honor
+          your silhouette."</p>
+      </div>
+      <div class="footer-right">
+        <div class="footer-links-col">
+          <h4>Explore</h4>
+          <a href="#home">Lookbook</a>
+          <a href="#catalog">Collection</a>
+        </div>
+        <div class="footer-links-col">
+          <h4>Contact</h4>
+          <p>Nairobi, Kenya</p>
+          <p>inquire@stylesbygathoni.com</p>
+          <a href="https://www.tiktok.com/@style_by_gathoni" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-top: 0.8rem; font-weight: 700; color: var(--text-primary); transition: color 0.3s ease;" onmouseover="this.style.color='var(--accent-color)'" onmouseout="this.style.color='var(--text-primary)'">TikTok: @style_by_gathoni</a>
+        </div>
+        <div class="footer-newsletter">
+          <h4>Newsletter</h4>
+          <p>Subscribe for exclusive seasonal lookbooks and private collection releases.</p>
+          <form class="newsletter-form" id="newsletter-form">
+            <input type="email" placeholder="Your email address" class="newsletter-input" required />
+            <button type="submit" class="btn-newsletter">Subscribe</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Styles by Gathoni. Handcrafted for Nairobi. Crafted for You.</p>
+    </div>
+  </footer>
+
+  <!-- Global Floating Toast Container (Apple-style Notification hub) -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Advanced Color Modal Container -->
+  <div id="advanced-color-modal" class="adv-color-modal-overlay">
+    <div class="adv-color-modal-content">
+      <!-- Top Bar -->
+      <div class="adv-color-top">
+        <div class="adv-color-formats">
+          <div class="adv-color-swatch-mini" id="adv-color-swatch-mini"></div>
+          <span class="adv-color-format">Name <b id="adv-val-name" style="color: var(--accent-color);">Scanning...</b></span>
+          <span class="adv-color-format">Hex <b id="adv-val-hex">#FF0000</b></span>
+          <span class="adv-color-format">RGB <b id="adv-val-rgb">255, 0, 0</b></span>
+          <span class="adv-color-format">HSL <b id="adv-val-hsl">0, 100%, 50%</b></span>
+          <span class="adv-color-format">OKLCH <b id="adv-val-oklch">0.63, 0.28, 29.23</b></span>
+        </div>
+        <div class="adv-color-palette" id="adv-color-palette"></div>
+        <button class="adv-close-btn" id="adv-close-btn">&times;</button>
+      </div>
+
+      <!-- Main Split Workspace -->
+      <div class="adv-color-split">
+        <!-- Left Workspace (Iro.js picker) -->
+        <div class="adv-color-left">
+          <div id="iro-picker-container"></div>
+          <div class="adv-color-actions">
+            <button class="btn-outline" id="adv-random-btn">Random Palette</button>
+            <button class="btn-dark" id="adv-export-btn">Save to Catalog <span style="margin-left: 0.3rem;">+</span></button>
+          </div>
+        </div>
+        <!-- Right Workspace (Preview & Harmony) -->
+        <div class="adv-color-right">
+          <select class="adv-harmony-select measurement-input" id="adv-harmony-select">
+            <option value="none">Choose harmony...</option>
+            <option value="analogous">Analogous</option>
+            <option value="complementary">Complementary</option>
+            <option value="triadic">Triadic</option>
+          </select>
+          <div class="adv-large-preview" id="adv-large-preview">
+            <div id="adv-large-hex" class="adv-large-hex-text">#FF0000</div>
+          </div>
+          <div id="adv-harmony-preview" class="adv-harmony-preview"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript App Controller (As ES6 Module) -->
+  <script type="module" src="app.js?v=3"></script>
+</body>
+
+</html>
