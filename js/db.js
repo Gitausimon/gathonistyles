@@ -384,6 +384,11 @@ export async function subscribeCatalog(callback) {
         snapshot.forEach(docSnap => {
           catalog.push({ id: docSnap.id, ...docSnap.data() });
         });
+        catalog.sort((a, b) => {
+          const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+          const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+          return timeB - timeA;
+        });
         callback(catalog);
       }, (error) => {
         console.error("Firestore catalog query failed, falling back to LocalStorage:", error);
@@ -397,7 +402,15 @@ export async function subscribeCatalog(callback) {
   }
 
   // LocalStorage fallback path
-  const getLocalCatalog = () => JSON.parse(localStorage.getItem(LS_KEYS.CATALOG) || "[]");
+  const getLocalCatalog = () => {
+    let catalog = JSON.parse(localStorage.getItem(LS_KEYS.CATALOG) || "[]");
+    catalog.sort((a, b) => {
+      const timeA = a.timestamp ? new Date(a.timestamp).getTime() : (a.id && a.id.startsWith("product-") ? parseInt(a.id.split("-")[1]) || 0 : 0);
+      const timeB = b.timestamp ? new Date(b.timestamp).getTime() : (b.id && b.id.startsWith("product-") ? parseInt(b.id.split("-")[1]) || 0 : 0);
+      return timeB - timeA;
+    });
+    return catalog;
+  };
   callback(getLocalCatalog());
 
   const cbWrapper = () => callback(getLocalCatalog());
@@ -420,7 +433,8 @@ export async function addProduct(productData) {
     price: Number(productData.price),
     type: productData.type,
     image: productData.image,
-    description: productData.description
+    description: productData.description,
+    timestamp: new Date().toISOString()
   };
 
   if (!useLocalStorage && db) {

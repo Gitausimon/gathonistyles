@@ -151,6 +151,7 @@ function initApp() {
   initJourneyTimeline();
   initMobileNav();
   initNewsletter();
+  initInspoUpload();
 
   // Add real-time listener stream mapping for global UI copy properties
   subscribeHomepageSettings((content) => {
@@ -479,7 +480,7 @@ function initMobileNav() {
 }
 
 // -------------------------------------------------------------
-// NEWSLETTER
+// NEWSLETTER & INSPO UPLOAD
 // -------------------------------------------------------------
 function initNewsletter() {
   const newsletterForm = document.getElementById("newsletter-form");
@@ -491,6 +492,44 @@ function initNewsletter() {
       showToast("Subscribed to Gathoni Styles releases.", "success");
     });
   }
+}
+
+function initInspoUpload() {
+  const fileUpload = document.getElementById("inspo-file-upload");
+  if (!fileUpload) return;
+
+  fileUpload.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    showToast("Uploading inspiration photo...", "info");
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'gathoni styles');
+
+      const cloudName = 'vbe25dhd';
+      const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+
+      const response = await fetch(cloudinaryUrl, { method: 'POST', body: formData });
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.error?.message || "Upload failed");
+
+      showToast("Success! Redirecting...", "success");
+      
+      // Navigate to the custom inspo booking checkout immediately
+      window.location.hash = `#pdp?id=custom-inspo&imgUrl=${encodeURIComponent(data.secure_url)}`;
+
+    } catch (error) {
+      console.error("Inspo upload failed:", error);
+      showToast("Upload failed.", "error");
+    }
+    
+    // Clear input so they can upload another one if they cancel
+    fileUpload.value = "";
+  });
 }
 
 // -------------------------------------------------------------
@@ -529,8 +568,11 @@ function initCatalogFilters() {
   filterContainer.addEventListener("click", (e) => {
     const targetButton = e.target.closest(".filter-pill");
     if (!targetButton) return;
+    
+    // Ignore clicks on the upload inspo label pill
+    if (targetButton.tagName !== 'BUTTON') return;
 
-    filterContainer.querySelectorAll(".filter-pill").forEach(btn => {
+    filterContainer.querySelectorAll("button.filter-pill").forEach(btn => {
       btn.classList.remove("active");
     });
     targetButton.classList.add("active");
@@ -635,7 +677,26 @@ function bindCardTilt(card) {
 // PRODUCT DETAIL PAGE (PDP) & CHECKOUT PIPELINE
 // -------------------------------------------------------------
 function loadProductDetails(productId) {
-  const product = CATALOG_ITEMS.find(p => p.id === productId);
+  let product;
+  
+  if (productId === "custom-inspo") {
+    // Generate an on-the-fly custom order product using the URL parameter
+    const hash = window.location.hash;
+    const urlParams = new URLSearchParams(hash.substring(hash.indexOf("?")));
+    const imgUrl = urlParams.get("imgUrl") || "assets/hero.jpg";
+    
+    product = {
+      id: "custom-inspo",
+      category: "Bespoke Design",
+      name: "Your Custom Inspiration",
+      price: 0,
+      description: "You uploaded your own design inspiration. Provide your exact measurements below and we will contact you to discuss details and pricing.",
+      type: "dress", // Prompts all measurements as a baseline
+      image: imgUrl
+    };
+  } else {
+    product = CATALOG_ITEMS.find(p => p.id === productId);
+  }
 
   if (!product) {
     showToast("Garment not found in catalog", "error");
@@ -648,7 +709,7 @@ function loadProductDetails(productId) {
   document.getElementById("pdp-product-image").alt = `${product.name} modeled by African custom fitting boutique`;
   document.getElementById("pdp-product-category").textContent = product.category;
   document.getElementById("pdp-product-title").textContent = product.name;
-  document.getElementById("pdp-product-price").textContent = `Ksh ${formatPrice(product.price)}`;
+  document.getElementById("pdp-product-price").textContent = product.price > 0 ? `Ksh ${formatPrice(product.price)}` : 'Pricing Discussed After Booking';
   document.getElementById("pdp-product-description").textContent = product.description;
 
   // Dynamic SEO Updates
@@ -799,7 +860,7 @@ function loadProductDetails(productId) {
         showToast("Saving measurements sheet...", "success");
         await addOrder(orderData);
 
-        const waLink = generateWhatsAppLink(product.name, garmentColor, measurements, product.price, clientName);
+        const waLink = generateWhatsAppLink(product.name, garmentColor, measurements, product.price, clientName, product.id === "custom-inspo" ? product.image : null);
 
         showToast("Consultation ready. Opening WhatsApp chat...", "success");
 
@@ -819,8 +880,14 @@ function loadProductDetails(productId) {
 }
 
 // WhatsApp Link Generator compiler
-export function generateWhatsAppLink(productName, garmentColor, measurements, price, clientName) {
-  let text = `Hello Gathoni Styles! I'd like to order a custom-tailored *${productName}* in *${garmentColor}* (Ksh ${formatPrice(price)}).\n\n`;
+export function generateWhatsAppLink(productName, garmentColor, measurements, price, clientName, inspoUrl = null) {
+  const displayPrice = price > 0 ? `Ksh ${formatPrice(price)}` : 'TBD';
+  let text = `Hello Gathoni Styles! I'd like to order a custom-tailored *${productName}* in *${garmentColor}* (Estimated: ${displayPrice}).\n\n`;
+  
+  if (inspoUrl) {
+    text += `*My Inspiration Photo:* ${inspoUrl}\n\n`;
+  }
+  
   text += `*Client Name:* ${clientName}\n`;
   text += `*My Measurements (in cm):*\n`;
 
