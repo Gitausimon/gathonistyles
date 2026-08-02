@@ -1,7 +1,7 @@
 {
   "name": "Styles by Gathoni Shop Admin",
   "short_name": "Gathoni Admin",
-  "start_url": "/#admin",
+  "start_url": "/?admin=true",
   "icons": [
     {
       "src": "/assets/favicon/android-chrome-192x192.png",

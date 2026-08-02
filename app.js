@@ -310,6 +310,13 @@ function initJourneyTimeline() {
 // -------------------------------------------------------------
 function initRouter() {
   const handleRouting = () => {
+    // iOS PWA Start URL fix: Catch ?admin=true query parameter from admin webmanifest
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get('admin') === 'true' && window.location.hash !== '#admin') {
+      window.location.hash = '#admin';
+      return; // Let the hashchange event handle the actual routing
+    }
+
     const hash = window.location.hash || "#home";
 
     // Hide all views first
