@@ -548,6 +548,38 @@
                   </button>
                 </form>
               </div>
+
+              <div class="admin-card glass" style="margin-top: 1rem;">
+                <h3 class="admin-card-title">Manage Available Colors</h3>
+                <form id="form-add-color" class="queue-editor-form">
+                  <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                    Add colors that customers can choose from when ordering.
+                  </p>
+                  
+                  <div class="form-group-admin" style="display: flex; gap: 0.5rem; align-items: flex-end; margin-bottom: 1rem;">
+                    <div style="flex: 2; display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="new-color-name" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Color Name</label>
+                      <input type="text" id="new-color-name" placeholder="e.g. Crimson Red" class="measurement-input" required />
+                    </div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="new-color-hex" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Hex Code</label>
+                      <input type="text" id="new-color-hex" value="#ff0000" class="measurement-input" pattern="^#[0-9A-Fa-f]{6}$" title="Hex code (e.g., #FF0000)" style="padding-left: 0.5rem; padding-right: 0.5rem;" required />
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                      <label for="new-color-value" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Picker</label>
+                      <input type="color" id="new-color-value" value="#ff0000" style="height: 42px; width: 42px; border: none; border-radius: 4px; cursor: pointer; background: transparent; padding: 0;" required />
+                    </div>
+                    <button type="submit" class="btn-primary-pill" style="padding: 0 1rem; height: 42px; font-size: 0.85rem;">
+                      Add
+                    </button>
+                  </div>
+                </form>
+                
+                <!-- List of existing colors -->
+                <div id="admin-colors-list" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+                  <!-- Dynamically Injected Colors -->
+                </div>
+              </div>
             </aside>
 
             <!-- Right Column: Inventory List -->

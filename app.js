@@ -19,7 +19,10 @@ import {
   deleteProduct,
   uploadProductImage,
   subscribeHomepageSettings,
-  updateHomepageSettings
+  updateHomepageSettings,
+  subscribeColors,
+  addColor,
+  deleteColor
 } from "./js/db.js";
 import { renderSilhouette, highlightZone } from "./js/components/Silhouette.js";
 import { renderMeasurementForm, bindFormEvents, requiredMeasurements, measurementRanges } from "./js/components/MeasurementForm.js";
@@ -31,6 +34,9 @@ let currentAdminUser = null;
 
 // Premium Lookbook Collection Catalog (populated dynamically)
 let CATALOG_ITEMS = [];
+
+// Dynamic Available Colors
+let AVAILABLE_COLORS = [];
 
 // App State
 let activeFilters = "all";
@@ -96,6 +102,14 @@ function initPWA() {
 // APP INITIALIZATION
 // -------------------------------------------------------------
 function initApp() {
+  // Subscribe to dynamic available colors
+  subscribeColors((colors) => {
+    AVAILABLE_COLORS = colors;
+    if (currentAdminUser) {
+      renderAdminColorsList();
+    }
+  });
+
   // Subscribe to public Dynamic Lookbook catalog changes from Database
   subscribeCatalog((items) => {
     CATALOG_ITEMS = items;
@@ -673,7 +687,7 @@ function loadProductDetails(productId) {
 
   // Mount components
   document.getElementById("pdp-silhouette-container").innerHTML = renderSilhouette();
-  document.getElementById("pdp-form-container").innerHTML = renderMeasurementForm(product.type);
+  document.getElementById("pdp-form-container").innerHTML = renderMeasurementForm(product.type, AVAILABLE_COLORS);
 
   // Bind form focus zone highlighter scripts
   bindFormEvents(document.getElementById("pdp-form-container"));
@@ -713,7 +727,7 @@ function loadProductDetails(productId) {
       const clientNameInput = document.getElementById("client-name");
       const clientName = clientNameInput ? clientNameInput.value.trim() : "Anonymous";
 
-      const colorInput = document.getElementById("garment-color");
+      const colorInput = form.querySelector('input[name="garment-color"]:checked');
       const garmentColor = colorInput ? colorInput.value : "Not specified";
 
       const measurements = {};
@@ -906,6 +920,48 @@ function initAdminDashboard() {
           uploadStatus.style.color = "var(--error, #dc3545)";
         }
         showToast("Image upload failed. " + error.message, "error");
+      }
+    });
+  }
+
+  // Submit new color
+  const addColorForm = document.getElementById("form-add-color");
+  if (addColorForm) {
+    const hexInput = document.getElementById("new-color-hex");
+    const colorPicker = document.getElementById("new-color-value");
+
+    if (hexInput && colorPicker) {
+      // Sync picker to hex input
+      colorPicker.addEventListener("input", (e) => {
+        hexInput.value = e.target.value.toUpperCase();
+      });
+      // Sync hex input to picker (when valid)
+      hexInput.addEventListener("input", (e) => {
+        const val = e.target.value;
+        if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+          colorPicker.value = val;
+        }
+      });
+    }
+
+    addColorForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("new-color-name").value.trim();
+      const value = hexInput ? hexInput.value.toUpperCase() : colorPicker.value;
+
+      if (!name) return;
+
+      showToast("Adding color...", "success");
+
+      try {
+        await addColor({ name, value });
+        showToast(`Color ${name} added!`, "success");
+        addColorForm.reset();
+        if (hexInput) hexInput.value = "#FF0000";
+        if (colorPicker) colorPicker.value = "#ff0000"; // Reset native picker
+      } catch (error) {
+        console.error("Color addition failed:", error);
+        showToast("Failed to add color.", "error");
       }
     });
   }
@@ -1346,6 +1402,60 @@ function renderAdminInventoryList() {
         } catch (err) {
           console.error("Failed to delete product:", err);
           showToast("Error deleting garment.", "error");
+        }
+      }
+    });
+
+    container.appendChild(itemRow);
+  });
+}
+
+function renderAdminColorsList() {
+  const container = document.getElementById("admin-colors-list");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (AVAILABLE_COLORS.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; color: var(--text-secondary); padding: 1rem 0; font-size: 0.85rem;">
+        No colors added yet.
+      </div>
+    `;
+    return;
+  }
+
+  AVAILABLE_COLORS.forEach(color => {
+    const itemRow = document.createElement("div");
+    itemRow.style.display = "flex";
+    itemRow.style.alignItems = "center";
+    itemRow.style.justifyContent = "space-between";
+    itemRow.style.padding = "0.5rem 0";
+    itemRow.style.borderBottom = "1px solid rgba(255,255,255,0.1)";
+
+    itemRow.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; background-color: ${color.value}; border: 1px solid rgba(255,255,255,0.2);"></span>
+        <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-primary);">${escapeHTML(color.name)}</span>
+      </div>
+      <button class="btn-remove-color" data-id="${color.id}" data-name="${color.name}" style="background: none; border: none; color: var(--accent-color); font-size: 0.8rem; cursor: pointer; padding: 0.2rem 0.5rem;">
+        Remove
+      </button>
+    `;
+
+    const deleteBtn = itemRow.querySelector(".btn-remove-color");
+    deleteBtn.addEventListener("click", async () => {
+      const cId = deleteBtn.getAttribute("data-id");
+      const cName = deleteBtn.getAttribute("data-name");
+
+      if (confirm(`Remove the color "${cName}"?`)) {
+        try {
+          showToast(`Removing "${cName}"...`, "success");
+          await deleteColor(cId);
+          showToast("Color removed.", "success");
+        } catch (err) {
+          console.error("Failed to delete color:", err);
+          showToast("Error deleting color.", "error");
         }
       }
     });

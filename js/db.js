@@ -69,7 +69,8 @@ if (isFirebaseConfigured) {
 const LS_KEYS = {
   QUEUE: "boutique_queue_wait_time",
   ORDERS: "boutique_orders",
-  CATALOG: "boutique_catalog"
+  CATALOG: "boutique_catalog",
+  COLORS: "boutique_colors"
 };
 
 // One-time migration: purge old hardcoded mock catalog & order data from localStorage
@@ -90,12 +91,24 @@ if (!localStorage.getItem(LS_KEYS.ORDERS)) {
 if (!localStorage.getItem(LS_KEYS.CATALOG)) {
   localStorage.setItem(LS_KEYS.CATALOG, JSON.stringify([]));
 }
+const defaultColors = [
+  { id: "color-1", name: "Red", value: "#FF0000" },
+  { id: "color-2", name: "Blue", value: "#0000FF" },
+  { id: "color-3", name: "Green", value: "#008000" },
+  { id: "color-4", name: "Purple", value: "#800080" },
+  { id: "color-5", name: "Black", value: "#000000" },
+  { id: "color-6", name: "White", value: "#ffffff" }
+];
+if (!localStorage.getItem(LS_KEYS.COLORS)) {
+  localStorage.setItem(LS_KEYS.COLORS, JSON.stringify(defaultColors));
+}
 
 // Event system for local updates simulation (pub-sub)
 const localChangeListeners = {
   queue: [],
   orders: [],
   catalog: [],
+  colors: [],
   auth: []
 };
 
@@ -447,6 +460,97 @@ export async function deleteProduct(productId) {
   catalog = catalog.filter(p => p.id !== productId);
   localStorage.setItem(LS_KEYS.CATALOG, JSON.stringify(catalog));
   triggerLocalChange("catalog", catalog);
+}
+
+// -------------------------------------------------------------
+// AVAILABLE COLORS ACTIONS
+// -------------------------------------------------------------
+
+/**
+ * Subscribes to the available colors list in real-time
+ * @param {function} callback - Receives the list of colors
+ * @returns {function} unsubscribe function
+ */
+export async function subscribeColors(callback) {
+  if (!useLocalStorage && db) {
+    try {
+      const { collection, onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+      const collRef = collection(db, "colors");
+      
+      return onSnapshot(collRef, (snapshot) => {
+        const colors = [];
+        snapshot.forEach(docSnap => {
+          colors.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        // If Firestore is empty, we might want to populate or just return empty
+        callback(colors);
+      }, (error) => {
+        console.error("Firestore colors query failed, falling back to LocalStorage:", error);
+        const localColors = JSON.parse(localStorage.getItem(LS_KEYS.COLORS) || "[]");
+        callback(localColors);
+      });
+    } catch (e) {
+      console.error("Error loading Firestore colors functions, falling back:", e);
+    }
+  }
+
+  // LocalStorage fallback path
+  const getLocalColors = () => JSON.parse(localStorage.getItem(LS_KEYS.COLORS) || "[]");
+  callback(getLocalColors());
+
+  const cbWrapper = () => callback(getLocalColors());
+  localChangeListeners.colors.push(cbWrapper);
+
+  return () => {
+    localChangeListeners.colors = localChangeListeners.colors.filter(cb => cb !== cbWrapper);
+  };
+}
+
+/**
+ * Adds a new color
+ * @param {object} colorData { name, value }
+ * @returns {Promise<string>} Created color ID
+ */
+export async function addColor(colorData) {
+  const newColor = {
+    name: colorData.name,
+    value: colorData.value
+  };
+
+  if (!useLocalStorage && db) {
+    const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const collRef = collection(db, "colors");
+    const docRef = await addDoc(collRef, newColor);
+    return docRef.id;
+  }
+
+  // LocalStorage fallback
+  const colorsList = JSON.parse(localStorage.getItem(LS_KEYS.COLORS) || "[]");
+  newColor.id = "color-" + Date.now();
+  colorsList.push(newColor);
+  localStorage.setItem(LS_KEYS.COLORS, JSON.stringify(colorsList));
+  
+  triggerLocalChange("colors", colorsList);
+  return newColor.id;
+}
+
+/**
+ * Deletes a color
+ * @param {string} colorId
+ */
+export async function deleteColor(colorId) {
+  if (!useLocalStorage && db) {
+    const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const docRef = doc(db, "colors", colorId);
+    await deleteDoc(docRef);
+    return;
+  }
+
+  // LocalStorage fallback
+  let colorsList = JSON.parse(localStorage.getItem(LS_KEYS.COLORS) || "[]");
+  colorsList = colorsList.filter(c => c.id !== colorId);
+  localStorage.setItem(LS_KEYS.COLORS, JSON.stringify(colorsList));
+  triggerLocalChange("colors", colorsList);
 }
 
 /**

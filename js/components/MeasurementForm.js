@@ -35,9 +35,10 @@ export const measurementRanges = {
 /**
  * Renders the HTML for the dynamic measurement form
  * @param {string} garmentType - The category of the item ('dress', 'skirt', 'official', 'casual')
+ * @param {Array} availableColors - List of available color objects
  * @returns {string} HTML string
  */
-export function renderMeasurementForm(garmentType) {
+export function renderMeasurementForm(garmentType, availableColors = []) {
   const fields = requiredMeasurements[garmentType.toLowerCase()] || requiredMeasurements.dress;
 
   let fieldsHtml = "";
@@ -121,17 +122,17 @@ export function renderMeasurementForm(garmentType) {
 
       <!-- Color Selection -->
       <div class="form-group color-select-group" style="margin-bottom: 2rem;">
-        <label for="garment-color">Garment Color <span class="required">*</span></label>
-        <div class="input-wrapper" style="display: block;">
-          <select id="garment-color" name="garment-color" required class="measurement-input" style="width: 100%; cursor: pointer;">
-            <option value="" disabled selected>Select a color...</option>
-            <option value="Red">Red</option>
-            <option value="Blue">Blue</option>
-            <option value="Green">Green</option>
-            <option value="Purple">Purple</option>
-            <option value="Black">Black</option>
-            <option value="White">White</option>
-          </select>
+        <label>Garment Color <span class="required">*</span></label>
+        <div class="color-swatches-container" style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 0.5rem;">
+          ${availableColors.length > 0 
+            ? availableColors.map(c => `
+              <label class="color-swatch-label" title="${c.name}">
+                <input type="radio" name="garment-color" value="${c.name}" class="color-swatch-input" required />
+                <span class="color-swatch-circle" style="background-color: ${c.value};"></span>
+              </label>
+            `).join("")
+            : '<span style="color: var(--text-secondary); font-size: 0.85rem;">No colors configured.</span>'
+          }
         </div>
       </div>
 
