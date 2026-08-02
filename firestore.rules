@@ -21,6 +21,13 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
     
+    match /colors/{document} {
+      // Anyone can read available colors
+      allow read: if true;
+      // Only authenticated admins can modify available colors
+      allow write: if isAdmin();
+    }
+    
     match /orders/{document} {
       // Anyone can create an order (checkout form)
       allow create: if true;

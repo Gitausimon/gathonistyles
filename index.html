@@ -62,6 +62,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
+  <!-- Color Math & UI Picker -->
+  <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-1RJ36XRQ33"></script>
   <script>
@@ -563,12 +567,11 @@
                     </div>
                     <div style="flex: 1; display: flex; flex-direction: column; gap: 0.4rem;">
                       <label for="new-color-hex" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Hex Code</label>
-                      <input type="text" id="new-color-hex" value="#ff0000" class="measurement-input" pattern="^#[0-9A-Fa-f]{6}$" title="Hex code (e.g., #FF0000)" style="padding-left: 0.5rem; padding-right: 0.5rem;" required />
+                      <input type="text" id="new-color-hex" value="#FF0000" class="measurement-input" pattern="^#[0-9A-Fa-f]{6}$" title="Hex code (e.g., #FF0000)" style="padding-left: 0.5rem; padding-right: 0.5rem;" required />
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-                      <label for="new-color-value" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Picker</label>
-                      <input type="color" id="new-color-value" value="#ff0000" style="height: 42px; width: 42px; border: none; border-radius: 4px; cursor: pointer; background: transparent; padding: 0;" required />
-                    </div>
+                    <button type="button" id="btn-open-advanced-color" class="btn-outline" style="height: 42px; padding: 0 1rem;">
+                       &#x1F3A8; Open Color Workspace
+                    </button>
                     <button type="submit" class="btn-primary-pill" style="padding: 0 1rem; height: 42px; font-size: 0.85rem;">
                       Add
                     </button>
@@ -638,6 +641,50 @@
 
   <!-- Global Floating Toast Container (Apple-style Notification hub) -->
   <div id="toast-container" class="toast-container"></div>
+
+  <!-- Advanced Color Modal Container -->
+  <div id="advanced-color-modal" class="adv-color-modal-overlay">
+    <div class="adv-color-modal-content">
+      <!-- Top Bar -->
+      <div class="adv-color-top">
+        <div class="adv-color-formats">
+          <div class="adv-color-swatch-mini" id="adv-color-swatch-mini"></div>
+          <span class="adv-color-format">Name <b id="adv-val-name" style="color: var(--accent-color);">Scanning...</b></span>
+          <span class="adv-color-format">Hex <b id="adv-val-hex">#FF0000</b></span>
+          <span class="adv-color-format">RGB <b id="adv-val-rgb">255, 0, 0</b></span>
+          <span class="adv-color-format">HSL <b id="adv-val-hsl">0, 100%, 50%</b></span>
+          <span class="adv-color-format">OKLCH <b id="adv-val-oklch">0.63, 0.28, 29.23</b></span>
+        </div>
+        <div class="adv-color-palette" id="adv-color-palette"></div>
+        <button class="adv-close-btn" id="adv-close-btn">&times;</button>
+      </div>
+
+      <!-- Main Split Workspace -->
+      <div class="adv-color-split">
+        <!-- Left Workspace (Iro.js picker) -->
+        <div class="adv-color-left">
+          <div id="iro-picker-container"></div>
+          <div class="adv-color-actions">
+            <button class="btn-outline" id="adv-random-btn">Random Palette</button>
+            <button class="btn-dark" id="adv-export-btn">Save to Catalog <span style="margin-left: 0.3rem;">+</span></button>
+          </div>
+        </div>
+        <!-- Right Workspace (Preview & Harmony) -->
+        <div class="adv-color-right">
+          <select class="adv-harmony-select measurement-input" id="adv-harmony-select">
+            <option value="none">Choose harmony...</option>
+            <option value="analogous">Analogous</option>
+            <option value="complementary">Complementary</option>
+            <option value="triadic">Triadic</option>
+          </select>
+          <div class="adv-large-preview" id="adv-large-preview">
+            <div id="adv-large-hex" class="adv-large-hex-text">#FF0000</div>
+          </div>
+          <div id="adv-harmony-preview" class="adv-harmony-preview"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Main JavaScript App Controller (As ES6 Module) -->
   <script type="module" src="app.js?v=3"></script>

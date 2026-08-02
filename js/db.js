@@ -91,17 +91,18 @@ if (!localStorage.getItem(LS_KEYS.ORDERS)) {
 if (!localStorage.getItem(LS_KEYS.CATALOG)) {
   localStorage.setItem(LS_KEYS.CATALOG, JSON.stringify([]));
 }
-const defaultColors = [
-  { id: "color-1", name: "Red", value: "#FF0000" },
-  { id: "color-2", name: "Blue", value: "#0000FF" },
-  { id: "color-3", name: "Green", value: "#008000" },
-  { id: "color-4", name: "Purple", value: "#800080" },
-  { id: "color-5", name: "Black", value: "#000000" },
-  { id: "color-6", name: "White", value: "#ffffff" }
-];
 if (!localStorage.getItem(LS_KEYS.COLORS)) {
-  localStorage.setItem(LS_KEYS.COLORS, JSON.stringify(defaultColors));
+  localStorage.setItem(LS_KEYS.COLORS, JSON.stringify([]));
 }
+// Clean up legacy default colors from local storage in case user had an old session
+try {
+  let existingColors = JSON.parse(localStorage.getItem(LS_KEYS.COLORS) || "[]");
+  const defaultIds = ["color-1", "color-2", "color-3", "color-4", "color-5", "color-6"];
+  if (existingColors.some(c => defaultIds.includes(c.id))) {
+    existingColors = existingColors.filter(c => !defaultIds.includes(c.id));
+    localStorage.setItem(LS_KEYS.COLORS, JSON.stringify(existingColors));
+  }
+} catch (e) {}
 
 // Event system for local updates simulation (pub-sub)
 const localChangeListeners = {

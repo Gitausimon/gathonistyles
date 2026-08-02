@@ -2459,3 +2459,228 @@ input[type="file"]::file-selector-button:hover {
   box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.3), 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
+/* =========================================================
+   ADVANCED COLOR MODAL WORKSPACE
+========================================================= */
+.adv-color-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.adv-color-modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.adv-color-modal-content {
+  width: 900px;
+  max-width: 95%;
+  background: #ffffff;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 40px 100px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(30px) scale(0.98);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.adv-color-modal-overlay.active .adv-color-modal-content {
+  transform: translateY(0) scale(1);
+}
+
+.adv-color-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(15,23,42,0.08);
+  background: #fafafc;
+}
+
+.adv-color-formats {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.adv-color-swatch-mini {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 4px solid #f1f1f1;
+  background: #FF0000;
+}
+
+.adv-color-format {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+.adv-color-format b {
+  color: var(--text-primary);
+  font-weight: 700;
+  margin-left: 0.2rem;
+}
+
+.adv-color-palette {
+  display: flex;
+  height: 24px;
+  width: 150px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: 1.5rem;
+}
+
+.adv-color-palette-stripe {
+  flex: 1;
+  height: 100%;
+}
+
+.adv-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color 0.3s;
+}
+.adv-close-btn:hover {
+  color: var(--error);
+}
+
+.adv-color-split {
+  display: flex;
+  padding: 2rem;
+  gap: 3rem;
+  background: #ffffff;
+}
+
+.adv-color-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.adv-color-actions {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+}
+.adv-color-actions button {
+  flex: 1;
+  padding: 0.8rem;
+  font-size: 0.85rem;
+}
+
+.adv-color-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.adv-harmony-select {
+  width: 200px;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+}
+
+.adv-large-preview {
+  flex: 1;
+  border-radius: var(--radius-sm);
+  background: #FF0000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+  box-shadow: inset 0 2px 15px rgba(0,0,0,0.05);
+  transition: background-color 0.1s ease;
+}
+
+.adv-large-hex-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #000;
+  background: rgba(255,255,255,0.7);
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  mix-blend-mode: screen; 
+  /* Fallback visibility */
+}
+
+.adv-harmony-preview {
+  display: flex;
+  height: 60px;
+  gap: 0.5rem;
+}
+.adv-harmony-color {
+  flex: 1;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* --- MOBILE OPTIMIZATIONS FOR COLOR MODAL --- */
+@media (max-width: 768px) {
+  .adv-color-modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    width: 95%;
+  }
+  
+  .adv-color-top {
+    flex-wrap: wrap;
+    padding: 1rem;
+    gap: 1rem;
+    position: relative;
+  }
+  
+  .adv-color-formats {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    width: 100%;
+    margin-right: 2rem; /* space for close button */
+  }
+  
+  .adv-color-palette {
+    display: none; /* Hide tiny palette on small screens */
+  }
+  
+  .adv-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+  
+  .adv-color-split {
+    flex-direction: column;
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  
+  .adv-color-left {
+    width: 100%;
+  }
+  
+  .adv-harmony-select {
+    width: 100%;
+  }
+  
+  .adv-large-preview {
+    min-height: 120px;
+  }
+  
+  #iro-picker-container {
+    transform: scale(0.9);
+  }
+}
+

@@ -38,6 +38,9 @@ let CATALOG_ITEMS = [];
 // Dynamic Available Colors
 let AVAILABLE_COLORS = [];
 
+// Historical Orders for analytics and popular colors
+let ADMIN_ORDERS = [];
+
 // App State
 let activeFilters = "all";
 
@@ -338,6 +341,7 @@ function initRouter() {
         showView("view-admin");
         setActiveNavLink("link-admin");
         renderAdminInventoryList();
+        renderAdminColorsList();
       } else {
         showView("view-login");
         setActiveNavLink("link-admin");
@@ -924,30 +928,209 @@ function initAdminDashboard() {
     });
   }
 
-  // Submit new color
-  const addColorForm = document.getElementById("form-add-color");
-  if (addColorForm) {
-    const hexInput = document.getElementById("new-color-hex");
-    const colorPicker = document.getElementById("new-color-value");
+  // Advanced Color Workspace Modal Logic
+  const advancedColorModal = document.getElementById("advanced-color-modal");
+  const btnOpenAdvColor = document.getElementById("btn-open-advanced-color");
+  const advCloseBtn = document.getElementById("adv-close-btn");
+  const hexInput = document.getElementById("new-color-hex");
 
-    if (hexInput && colorPicker) {
-      // Sync picker to hex input
-      colorPicker.addEventListener("input", (e) => {
-        hexInput.value = e.target.value.toUpperCase();
-      });
-      // Sync hex input to picker (when valid)
-      hexInput.addEventListener("input", (e) => {
+  let colorPicker = null;
+
+  if (advancedColorModal && btnOpenAdvColor) {
+    btnOpenAdvColor.addEventListener("click", () => {
+      advancedColorModal.classList.add("active");
+      
+      // Lazy init iro.js picker
+      if (!colorPicker && window.iro) {
+        colorPicker = new iro.ColorPicker("#iro-picker-container", {
+          width: 250,
+          color: hexInput ? hexInput.value : "#FF0000",
+          layout: [
+            { component: iro.ui.Box },
+            { component: iro.ui.Slider, options: { sliderType: 'hue' } },
+            { component: iro.ui.Slider, options: { sliderType: 'alpha' } }
+          ]
+        });
+
+        let nameFetchTimeout;
+
+        const updateAdvUI = (color) => {
+          const hexString = color.hexString.toUpperCase();
+          const rgb = color.rgb;
+          const hsl = color.hsl;
+          
+          document.getElementById("adv-val-hex").textContent = hexString;
+          document.getElementById("adv-val-rgb").textContent = `${rgb.r}, ${rgb.g}, ${rgb.b}`;
+          document.getElementById("adv-val-hsl").textContent = `${hsl.h}, ${hsl.s}%, ${hsl.l}%`;
+          
+          document.getElementById("adv-color-swatch-mini").style.backgroundColor = hexString;
+          document.getElementById("adv-large-preview").style.backgroundColor = hexString;
+          document.getElementById("adv-large-hex").textContent = hexString;
+
+          const nameSpan = document.getElementById("adv-val-name");
+          if (nameSpan) {
+            nameSpan.textContent = "Scanning...";
+            clearTimeout(nameFetchTimeout);
+            nameFetchTimeout = setTimeout(async () => {
+              try {
+                const response = await fetch(`https://www.thecolorapi.com/id?hex=${hexString.replace("#", "")}`);
+                const data = await response.json();
+                if (data && data.name && data.name.value) {
+                  nameSpan.textContent = data.name.value;
+                } else {
+                  nameSpan.textContent = "Custom Colors";
+                }
+              } catch(e) {
+                nameSpan.textContent = "Custom Colors";
+              }
+            }, 600);
+          }
+
+          // If chroma is available, calculate OKLCH and Harmony
+          if (window.chroma) {
+            const ch = chroma(hexString);
+            const oklch = ch.oklch();
+            // oklch values: L (0-1), C (~0-0.4), H (0-360)
+            const l = (oklch[0] || 0).toFixed(2);
+            const c = (oklch[1] || 0).toFixed(2);
+            const h = (oklch[2] || 0).toFixed(2);
+            document.getElementById("adv-val-oklch").textContent = `${l}, ${c}, ${h}`;
+            
+            updateHarmony(ch);
+          }
+        };
+
+        colorPicker.on('color:change', updateAdvUI);
+        // initial call
+        updateAdvUI(colorPicker.color);
+
+        // Bind random palette button
+        const randomBtn = document.getElementById("adv-random-btn");
+        if (randomBtn) {
+          randomBtn.addEventListener("click", () => {
+            if(window.chroma) {
+              colorPicker.color.hexString = chroma.random().hex();
+            }
+          });
+        }
+        
+        // Bind harmony select
+        const harmonySelect = document.getElementById("adv-harmony-select");
+        if (harmonySelect) {
+          harmonySelect.addEventListener("change", () => {
+            if(window.chroma) {
+              updateHarmony(chroma(colorPicker.color.hexString));
+            }
+          });
+        }
+
+        function updateHarmony(baseColor) {
+          const mode = document.getElementById("adv-harmony-select").value;
+          const container = document.getElementById("adv-harmony-preview");
+          const paletteContainer = document.getElementById("adv-color-palette");
+          container.innerHTML = "";
+          paletteContainer.innerHTML = "";
+          
+          if (mode === "none") return;
+
+          let harmonyHexes = [];
+          
+          if (mode === "analogous") {
+            harmonyHexes = [
+              baseColor.set('hsl.h', '-30').hex(),
+              baseColor.hex(),
+              baseColor.set('hsl.h', '+30').hex()
+            ];
+          } else if (mode === "complementary") {
+            harmonyHexes = [
+              baseColor.hex(),
+              baseColor.set('hsl.h', '+180').hex()
+            ];
+          } else if (mode === "triadic") {
+            harmonyHexes = [
+              baseColor.hex(),
+              baseColor.set('hsl.h', '+120').hex(),
+              baseColor.set('hsl.h', '+240').hex()
+            ];
+          }
+
+          harmonyHexes.forEach(hex => {
+            const div = document.createElement("div");
+            div.className = "adv-harmony-color";
+            div.style.backgroundColor = hex;
+            div.title = hex;
+            container.appendChild(div);
+            
+            // tiny palette
+            const strip = document.createElement("div");
+            strip.className = "adv-color-palette-stripe";
+            strip.style.backgroundColor = hex;
+            paletteContainer.appendChild(strip);
+          });
+        }
+      } else if (colorPicker && hexInput) {
+        colorPicker.color.hexString = hexInput.value;
+      }
+    });
+
+    advCloseBtn.addEventListener("click", () => {
+      advancedColorModal.classList.remove("active");
+    });
+    
+    // Apply bulk export action (Add straight to DB)
+    const exportBtn = document.getElementById("adv-export-btn");
+    exportBtn.addEventListener("click", async () => {
+      if (colorPicker) {
+        const selectedHex = colorPicker.color.hexString.toUpperCase();
+        let colorName = document.getElementById("adv-val-name")?.textContent;
+        if (!colorName || colorName === "Scanning..." || colorName === "Unknown" || colorName === "Error") {
+           colorName = "Custom";
+        }
+        
+        try {
+          await addColor({ name: colorName, value: selectedHex });
+          showToast(`Color ${colorName} saved to catalog!`, "success");
+        } catch (error) {
+          console.error("Color addition failed:", error);
+          showToast("Failed to add color.", "error");
+        }
+      }
+      
+      // Close modal as requested by user
+      advancedColorModal.classList.remove("active");
+    });
+    
+    // Auto-fetch on blur for the manual hex input
+    if (hexInput) {
+      hexInput.addEventListener("blur", async (e) => {
         const val = e.target.value;
         if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
-          colorPicker.value = val;
+          try {
+            const hexClean = val.replace("#", "");
+            const nameInput = document.getElementById("new-color-name");
+            if (nameInput && !nameInput.value) {
+              nameInput.placeholder = "Detecting...";
+              const response = await fetch(`https://www.thecolorapi.com/id?hex=${hexClean}`);
+              const data = await response.json();
+              if (data && data.name && data.name.value) {
+                nameInput.value = data.name.value;
+              }
+            }
+          } catch(e) {
+            console.error("Fetch name failed", e);
+          }
         }
       });
     }
+  }
 
+  // Submit new color
+  const addColorForm = document.getElementById("form-add-color");
+  if (addColorForm) {
     addColorForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("new-color-name").value.trim();
-      const value = hexInput ? hexInput.value.toUpperCase() : colorPicker.value;
+      const value = hexInput ? hexInput.value.toUpperCase() : "#FF0000";
 
       if (!name) return;
 
@@ -958,7 +1141,6 @@ function initAdminDashboard() {
         showToast(`Color ${name} added!`, "success");
         addColorForm.reset();
         if (hexInput) hexInput.value = "#FF0000";
-        if (colorPicker) colorPicker.value = "#ff0000"; // Reset native picker
       } catch (error) {
         console.error("Color addition failed:", error);
         showToast("Failed to add color.", "error");
@@ -1035,6 +1217,8 @@ function initAdminDashboard() {
   const ordersListContainer = document.getElementById("admin-orders-list");
 
   subscribeOrders((orders) => {
+    ADMIN_ORDERS = orders;
+    
     // Sync DB status indicator badge
     const dbBadge = document.getElementById("db-status-badge");
     if (dbBadge) {
@@ -1416,30 +1600,86 @@ function renderAdminColorsList() {
 
   container.innerHTML = "";
 
+  // 1. Calculate Popular Colors from ADMIN_ORDERS
+  const colorCounts = {};
+  if (ADMIN_ORDERS && Array.isArray(ADMIN_ORDERS)) {
+    ADMIN_ORDERS.forEach(order => {
+      if (order.color && order.color !== "Not specified") {
+        colorCounts[order.color] = (colorCounts[order.color] || 0) + 1;
+      }
+    });
+  }
+  
+  const sortedColors = Object.entries(colorCounts).sort((a,b) => b[1] - a[1]);
+  
+  if (sortedColors.length > 0) {
+    const popularSection = document.createElement("div");
+    popularSection.style.marginBottom = "2.5rem";
+    let popularHTML = `<h3 style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">Popular Choices (From Orders)</h3>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">`;
+    
+    // Show top 6 popular colors
+    sortedColors.slice(0, 6).forEach(([hex, count]) => {
+      // Find friendly name
+      const known = AVAILABLE_COLORS.find(c => c.value.toLowerCase() === hex.toLowerCase());
+      const cName = known ? known.name : hex;
+      popularHTML += `
+        <div style="background: rgba(15,23,42,0.02); padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid rgba(15,23,42,0.06); display: flex; align-items: center; gap: 0.6rem;">
+          <div style="width: 14px; height: 14px; border-radius: 50%; background-color: ${hex}; border: 1px solid rgba(0,0,0,0.1);"></div>
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 600;">${escapeHTML(cName)}</div>
+            <div style="font-size: 0.65rem; color: var(--text-secondary);">${count} orders</div>
+          </div>
+        </div>
+      `;
+    });
+    popularHTML += `</div>`;
+    popularSection.innerHTML = popularHTML;
+    container.appendChild(popularSection);
+  }
+
+  // 2. Render Full Catalog
+  const availableSection = document.createElement("div");
+  availableSection.innerHTML = `<h3 style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">Catalog Palette</h3>`;
+  
   if (AVAILABLE_COLORS.length === 0) {
-    container.innerHTML = `
-      <div style="text-align: center; color: var(--text-secondary); padding: 1rem 0; font-size: 0.85rem;">
-        No colors added yet.
+    availableSection.innerHTML += `
+      <div style="text-align: center; color: var(--text-secondary); padding: 1.5rem 0; font-size: 0.85rem; background: rgba(15,23,42,0.02); border-radius: var(--radius-sm); border: 1px dashed rgba(15,23,42,0.15);">
+        No custom colors added yet. Open the workspace below to start building your palette!
       </div>
     `;
+    container.appendChild(availableSection);
     return;
   }
+
+  const listDiv = document.createElement("div");
+  listDiv.style.display = "flex";
+  listDiv.style.flexDirection = "column";
+  listDiv.style.gap = "0.5rem";
 
   AVAILABLE_COLORS.forEach(color => {
     const itemRow = document.createElement("div");
     itemRow.style.display = "flex";
     itemRow.style.alignItems = "center";
     itemRow.style.justifyContent = "space-between";
-    itemRow.style.padding = "0.5rem 0";
-    itemRow.style.borderBottom = "1px solid rgba(255,255,255,0.1)";
+    itemRow.style.padding = "0.75rem 1rem";
+    itemRow.style.borderRadius = "var(--radius-sm)";
+    itemRow.style.border = "1px solid rgba(15, 23, 42, 0.08)";
+    itemRow.style.background = "#ffffff";
+    itemRow.style.transition = "transform 0.2s, box-shadow 0.2s";
+    
+    // Add simple hover effect wrapper inside list logic
+    itemRow.onmouseenter = () => itemRow.style.boxShadow = "0 8px 15px rgba(0,0,0,0.05)";
+    itemRow.onmouseleave = () => itemRow.style.boxShadow = "none";
 
     itemRow.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <span style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; background-color: ${color.value}; border: 1px solid rgba(255,255,255,0.2);"></span>
-        <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-primary);">${escapeHTML(color.name)}</span>
+      <div style="display: flex; align-items: center; gap: 0.8rem;">
+        <span style="display: inline-block; width: 28px; height: 28px; border-radius: 50%; background-color: ${color.value}; border: 1px solid rgba(0,0,0,0.1);"></span>
+        <span style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-right: 0.5rem;">${escapeHTML(color.name)}</span>
+        <span style="font-size: 0.75rem; color: var(--text-secondary); background: #f0f0f0; padding: 0.15rem 0.5rem; border-radius: 12px; font-family: monospace;">${color.value}</span>
       </div>
-      <button class="btn-remove-color" data-id="${color.id}" data-name="${color.name}" style="background: none; border: none; color: var(--accent-color); font-size: 0.8rem; cursor: pointer; padding: 0.2rem 0.5rem;">
-        Remove
+      <button class="btn-remove-color" data-id="${color.id}" data-name="${color.name}" title="Remove color" style="background: none; border: none; color: #ef4444; font-size: 1rem; cursor: pointer; padding: 0.2rem 0.5rem; transition: transform 0.2s;">
+        &times;
       </button>
     `;
 
@@ -1448,7 +1688,7 @@ function renderAdminColorsList() {
       const cId = deleteBtn.getAttribute("data-id");
       const cName = deleteBtn.getAttribute("data-name");
 
-      if (confirm(`Remove the color "${cName}"?`)) {
+      if (confirm(`Remove the color "${cName}" from your active catalog?`)) {
         try {
           showToast(`Removing "${cName}"...`, "success");
           await deleteColor(cId);
@@ -1460,8 +1700,11 @@ function renderAdminColorsList() {
       }
     });
 
-    container.appendChild(itemRow);
+    listDiv.appendChild(itemRow);
   });
+  
+  availableSection.appendChild(listDiv);
+  container.appendChild(availableSection);
 }
 
 /**
