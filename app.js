@@ -358,6 +358,13 @@ function initRouter() {
       setActiveNavLink("link-home");
     }
 
+    // Force address bar to include ?admin=true so iOS Safari Add to Homescreen captures it
+    if (hash === "#admin" && !window.location.search.includes("admin=true")) {
+      window.history.replaceState(null, "", "?admin=true#admin");
+    } else if (hash !== "#admin" && window.location.search.includes("admin=true")) {
+      window.history.replaceState(null, "", window.location.pathname + hash);
+    }
+
     // Swap manifest dynamically so only admins get the admin PWA install prompt
     const manifestLink = document.getElementById("app-manifest");
     if (manifestLink) {
